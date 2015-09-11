@@ -1,0 +1,1173 @@
+% \iffalse meta-comment
+%<*internal|class|msdwg>
+\def\Version{2015/06/10 v2.0}
+%</internal|class|msdwg>
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+The bathslides class: University of Bath presentations
+=========================================================
+
+The bathslides LaTeX class is intended to produce slides for University
+of Bath presentations, or an accompanying transcript, or both.
+It is based on the beamer class.
+
+Installation
+------------
+
+### Pre-requisites ###
+
+In order for the documentation to be typeset correctly, you will need
+to have the image files `uob-logo-grey-transparent.pdf` (for PDF) and
+`uob-logo-grey-transparent.pdf` (for DVI) somewhere TeX can find them.
+I recommend you place them in the same folder as `bathslides.dtx`
+while compiling the class and in the `tex/latex/bathslides` folder
+thereafter.
+
+You can download `uob-logo-grey-transparent.eps` from the
+[University of Bath website][logo]. To get the PDF version, run
+`epstopdf uob-logo-grey-transparent.eps`. The `epstopdf` utility is
+available in most TeX distributions.
+
+The documentation uses fonts from the XCharter, sourcesanspro,
+sourcecodepro and inconsolata packages.
+
+### Automated way ###
+
+A makefile is provided which you can use with the Make utility:
+
+  * Running `make` generates the derived files
+
+      - README.md
+      - bathslides.pdf
+      - bathslides-slides.pdf
+      - bathslides.cls
+
+  * Running `make inst` installs the files (and images) in the user's
+    TeX tree.
+  * Running `make install` installs the files (and images) in the
+    local TeX tree.
+
+The makefile is set up to use latexmk and lualatex by default.
+If this causes difficulty you could change it to use pdflatex directly
+instead.
+
+### Manual way ###
+
+ 1. Compile bathslides.dtx just as you would a normal LaTeX file. As well
+    as the usual PDF (or DVI) and auxiliary files, several others are
+    generated.
+
+ 2. Compile bathslides.dtx a second time with `-jobname=bathslides-slides`
+    as a command line option to generate the sample slides.
+
+ 3. Move the files to your TeX tree as follows:
+
+      - `source/latex/bathslides`: bathslides.dtx, bathslides.ins
+      - `tex/latex/bathslides`: bathslides.cls, and (optionally) the
+        separately available image files as noted above
+      - `doc/latex/bathslides`: bathslides.pdf, bathslides-slides.pdf,
+         README.md
+
+ 4. You may then have to update your installation's file name database
+    before TeX and friends can see the files.
+
+Licence
+-------
+
+Copyright 2015 Alex Ball.
+
+This work consists of the documented LaTeX file bathslides.dtx,
+and a Makefile.
+
+The text files contained in this work may be distributed and/or modified
+under the conditions of the [LaTeX Project Public License (LPPL)][lppl],
+either version 1.3c of this license or (at your option) any later
+version.
+
+This work is "maintained" (as per LPPL maintenance status) by [Alex
+Ball][me].
+
+[logo]: http://www.bath.ac.uk/marketing/guides-assets/visual-identity/logo/#id4
+[lppl]: http://www.latex-project.org/lppl.txt
+[me]: http://alexball.me.uk/
+
+%</readme>
+%<*class>
+%<<LITERATE
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesClass{bathslides}
+    [\Version\space Class for University of Bath presentations]
+%
+% == Options and mode switching ==
+%
+% This class has four use cases, which decompose into two sets of two. The
+% first decision is |\ifArticle|: are we producing an article (‘true’), or a
+% slide deck (‘false’ – default)?
+%
+\newif\ifArticle\Articlefalse
+%
+% If in article mode, we ask |\ifSet|: do we also want to initiate a run
+% to produce the slide deck (‘true’) or not (‘false’ – default)?
+%
+\newif\ifSet\Setfalse
+%
+% If in slides mode, we ask |\ifHandout|: do we want them laid out for printing
+% (‘true’) or for screen (‘false’ – default)?
+%
+\newif\ifHandout\Handoutfalse
+%
+% The user answers by means of options, of course.
+%
+\DeclareOption{article}{\Articletrue}
+\DeclareOption{handout}{\Handouttrue\PassOptionsToClass{handout}{beamer}}
+\DeclareOption{set}{\Settrue}
+\ProcessOptions\relax
+
+%
+% So, if in article mode \emph{and} producing slides as well, we compile twice.
+% The first time, the |\jobname| does not end in ‘-slides’ (user take note), so
+% we initiate a job with ‘-slides’ appended to the |\jobname| and pause. In the
+% parallel session, we notice the new |\jobname| suffix and switch to slides
+% mode. Once that is finished, we proceed with the original job in article mode.
+% Note that this requires |\write18| enabled and 'latexmk' installed.
+%
+\ifSet
+  \RequirePackage{xstring}%
+  \IfEndWith*{\jobname}{-slides}{%
+    \Articlefalse
+  }{%
+    \immediate\write18{latexmk -pdf -silent -pdflatex="lualatex --shell-escape -synctex=1 \@percentchar O \@percentchar S" -jobname=\jobname-slides \jobname}
+    \Articletrue
+  }%
+%LITERATE
+%<class>\fi
+%<<LITERATE
+%
+% Article mode uses the 'article' class. We use 12pt text to keep it readable on
+% the podium. Left and right margins of 3cm and top and bottom margins of 2.5cm
+% give a typeblock with an approximate golden aspect ratio.
+%
+\ifArticle
+  \LoadClass[a4paper,12pt]{article}
+  \RequirePackage[hmargin=3cm,vmargin=2.5cm]{geometry}
+%
+% The 'beamerarticle' package provides compatibility with 'beamer' code. It
+% loads 'xcolor', so any additional options we want have to be declared
+% beforehand.
+%
+  \PassOptionsToPackage{table}{xcolor}
+  \RequirePackage[noamssymb]{beamerarticle}
+%
+% I find slide titles work better as section headings or captions, so we turn
+% off the default handling from 'beamerarticle'.
+%
+  \renewcommand{\frametitle}[1]{}
+  \renewcommand{\framesubtitle}[1]{}
+%
+% Slide mode uses 'beamer', of course.
+%
+%LITERATE
+%<class>\else
+%<<LITERATE
+  \LoadClass[ignorenonframetext,xcolor=table,noamssymb]{beamer}[2007/03/11]
+  \usefonttheme{professionalfonts}
+  \RequirePackage{tikz}
+%
+% In handout mode, we lay out two slides to an A4 page. 
+%
+  \ifHandout
+    \RequirePackage{pgfpages}
+    \pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
+%LITERATE
+%<class>  \fi
+%<class>\fi
+%<<LITERATE
+
+%
+% == Internal conveniences ==
+%
+% We will need the 'etoolbox' package's patching utilities, and 'calc' will be
+% helpful for calculating lengths.
+%
+\RequirePackage{etoolbox, calc}
+
+%
+% == Typography ==
+%
+% I use British orthography. If there is a demand for it, I might convert the
+% following lines to respect class options instead of a hard-coded language, but
+% it is easy enough to patch them with |\PassOptionsToPackage| before loading
+% the class.
+%
+\RequirePackage[british]{babel}
+\RequirePackage[british,cleanlook]{isodate}
+%
+% We take advantage of 'microtype' enhancements.
+%
+\RequirePackage{microtype}
+%
+% Some sensible font sizes and weights for use on slides.
+%
+\setbeamerfont{frametitle}{size=\LARGE}
+\setbeamerfont{framesubtitle}{size=\large}
+\setbeamerfont{footline}{size=\scriptsize}
+\setbeamerfont{alerted text}{series=\bfseries}
+%
+% The colour palette for the presentation.
+%
+\xdefinecolor{primary}{RGB}{69,83,95}%     main colour used for special text
+\xdefinecolor{contrast}{RGB}{59,147,166}%  highlight colour used in framing elements
+\xdefinecolor{warm}{RGB}{255,255,230}%     generic pale yellow for readability
+\xdefinecolor{cool}{RGB}{243,243,243}%     generic pale gray
+%
+% We apply these to make a 'beamer' colour scheme.
+%
+\setbeamercolor{normal text}{bg=white,fg=black}
+\setbeamercolor{structure}{bg=,fg=primary}
+\setbeamercolor{alerted text}{bg=,fg=contrast}
+\setbeamercolor{frametitle}{bg=,fg=primary}
+\setbeamercolor{footline}{bg=,fg=contrast}
+\setbeamercolor{sidebar}{bg=contrast,fg=white}
+\setbeamercolor{title}{bg=,fg=primary}
+\setbeamercolor{subtitle}{bg=,fg=black}
+\setbeamercolor{author}{bg=,fg=black}
+\setbeamercolor{institute}{bg=,fg=black}
+\setbeamercolor{date}{bg=,fg=black}
+\setbeamercolor{progress}{bg=contrast!50,fg=white}
+%
+% In article mode, to give the speaker an impression of what appears on the
+% slides and what doesn't, we switch to sans serif for slide contents.
+%
+\addtobeamertemplate{frame begin}{}{\sffamily}
+\addtobeamertemplate{frame end}{\rmfamily}{}
+%
+% When reading from a podium, some extra whitespace helps me keep track of where
+% I am. So we switch to using Web-style paragraphs.
+%
+\mode<article>{%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{1em plus 0.2em minus 0.2em}%
+%
+% But this makes lists a bit too open, so we tighten them up again with
+% 'enumitem'.
+%
+  \RequirePackage{enumitem}%
+  \setlist{topsep=0pt}%
+%
+% There is, however, a bug caused by loading both 'beamerarticle' and 'enumitem'
+% that makes description lists unusable. Happily we can work around it by
+% throwing away some of the modifications made |\AtBeginDocument|.
+%
+  \newlist{fixeddescription}{description}{3}%
+  \AtBeginDocument{
+    \let\description=\fixeddescription
+    \let\enddescription=\endfixeddescription
+  }%
+}
+
+%
+% == Metadata handling ==
+%
+% We define some new elements of metadata.
+% The |\occasion| command is used to record the event at which the presentation
+% is given. The content is available again via |\insertoccasion|.
+%
+\newcommand*{\occasion}[1]{%
+  \def\insertoccasion{#1}%
+  \subject{Presentation given at #1}%
+  \mode<article>{%
+    \AtBeginDocument{\hypersetup{pdfsubject={Presentation given at #1}}}%
+  }%
+}
+%
+% The |\hashtag| command is used to suggest a hashtag people can use to share
+% this presentation on social media. The content is available again via
+% |\inserthashtag|
+%
+\let\inserthashtag\empty
+\newcommand*{\hashtag}[1]{%
+  \renewcommand*{\inserthashtag}{\href{https://twitter.com/hashtag/#1}{\##1}}%
+}
+%
+% The |\authorurl| command is used to give a URL where more information about
+% the speaker is available. The content is available again via
+% |\insertauthorurl|
+%
+\newcommand*{\authorurl}[1]{%
+  \def\insertauthorurl{#1}%
+}
+%
+% In case the author forgets to include some key metadata, we provide some
+% safety values to allow the document to compile.
+%
+\def\@title{Please provide a title}
+\def\@author{Please specify the author}
+\edef\@date{\the\year-\ifnum\month<10 0\fi\the\month-\ifnum\day<10 0\fi\the\day}
+%
+% The 'beamer' class takes care of adding presentation metadata to the PDF
+% properties, but the 'article' class doesn't. We achieve parity with some
+% additional |\hypersetup|.
+%
+\mode<article>{
+  \AtBeginDocument{
+    \begingroup
+      \hypersetup{pdftitle={\@title
+        \ifdefvoid{\insertsubtitle}{}{\ - \insertsubtitle}%
+      }}%
+    \def\and{\unskip, }%
+    \let\thanks=\@gobble
+    \let\inst=\@gobble
+    \hypersetup{pdfauthor={\@author}}%
+    \endgroup
+  }
+%
+% We adjust |\maketitle| to shave off a little vertical space from the top,
+% add in a line for the |\institute|, include details of the occasion and
+% print the date pleasingly.
+%
+  \ifundef{\beamer@originstitute}{%
+    \renewcommand{\institute}[2][]{\def\insertinstitute{#2}}%
+  }{%
+    \renewcommand{\institute}[2][]{\def\insertinstitute{#2}\beamer@originstitute{#2}}%
+  }%
+  \def\@maketitle{%
+    \newpage
+    \null
+    \begin{center}%
+    \let\footnote\thanks
+      {\LARGE \@title \par}%
+      \vskip 1.5em%
+      {%
+        \large\lineskip .5em%
+        \begin{tabular}[t]{c}%
+          \ifundef{\insertauthorurl}{\@author}{\href{\insertauthorurl}{\@author}}%
+        \end{tabular}\par
+      }%
+      \ifdefvoid{\insertinstitute}{}{%
+        {%
+          \small\lineskip .5em%
+          \begin{tabular}[t]{c}%
+            \insertinstitute
+          \end{tabular}%
+        }%
+      }%
+      \par\vskip 1em%
+      {%
+        \large
+        \ifdefvoid{\insertoccasion}{}{\insertoccasion, }%
+        \printdate{\@date}%
+      }%
+    \end{center}%
+    \par\vskip 1.5em%
+  }
+}
+%
+% It looks odd to have the |\inst| markers from 'beamer' in the maths font, so
+% we replace those definitions with something more in keeping.
+%
+\def\beamer@insttitle#1{\textsuperscript{#1}}
+\def\beamer@instinst#1{\textsuperscript{#1}\ignorespaces}
+
+%
+% == Late package dependencies ==
+%
+% Some packages need to be loaded late to prevent problems.
+%
+\RequirePackage{hyperref}
+\hypersetup
+{breaklinks
+,bookmarks
+,bookmarksopen
+,pdfview=FitH
+,pdfstartview=FitH
+,pdfborder={0 0 0}
+}
+\RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
+
+%
+% == Slide templates ==
+%
+% We introduce a switch, |\iftitlepage|, that can be used to provide a
+% different layout depending on whether this is a normal or a title slide.
+%
+%LITERATE
+\newif\iftitlepage\titlepagefalse
+%<<LITERATE
+%
+% We allow a little more horizontal space by squeezing the margins
+%
+\setbeamersize{text margin left=4mm,text margin right=4mm}
+%
+% We allow users to replace the normal template with a background image.
+% Note that the image is distorted to fit the slide dimensions, so whatever one
+% is chosen needs to have an approximate aspect ratio of 4:3.
+% 
+% The method used is to save the filename of the image to |\bgpicture|, and let
+% the user change it with a frame option, `background'.
+% 
+% For this we define a Boolean switch, |\ifbgpicture|, which is used in the
+% regular 'beamer' template `background' to decide whether to include the
+% |\bgpicture|.
+%
+%LITERATE
+\newcommand{\bgpicture}{}
+\newif\ifbgpicture\bgpicturefalse
+\define@key{beamerframe}{background}[]{%
+  \ifstrempty{#1}{%
+    \bgpicturefalse
+  }{%
+    \gdef\bgpicture{#1}\bgpicturetrue
+  }%
+}
+\setbeamertemplate{background}{%
+  \ifbgpicture
+    \includegraphics[width=\paperwidth,height=\paperheight]{\bgpicture}%
+    \setbeamersize{sidebar width right=0mm}%
+    \setbeamertemplate{sidebar right}[default]%
+%<<LITERATE
+%
+% The normal template consists of a coloured bar and the University logo.
+% The coloured bar also contains the hashtag, if provided, and the
+% section titles.
+%
+%LITERATE
+%<class>  \else
+    \begin{tikzpicture}[remember picture, overlay]
+      \coordinate[xshift=-9mm, yshift=-4mm] (logo-ne) at (current page.north east);
+      \node[inner sep=0pt,anchor=north east] (logo) at (logo-ne)
+        {\includegraphics[height=11mm]{uob-logo-grey-transparent}};
+      \coordinate[xshift=-1mm,yshift=-1.1mm] (topbar-ne) at (logo.north west);
+      \coordinate[xshift=-1mm,yshift=1.1mm] (topbar-se) at (logo.south west);
+      \fill[contrast] (topbar-se)
+        -- (topbar-se -| current page.north west)
+        -- (topbar-ne -| current page.north west) [rounded corners=2mm]
+        -- (topbar-ne) [sharp corners]
+        -- cycle;
+      \coordinate[yshift=-9.5mm] (topbar-text-w) at (current page.north west);
+      \node[text=white,font=\rmfamily\scshape,anchor=west,text width=7cm,inner xsep=4mm,align=left] at (topbar-text-w)
+%<class>        {\iftitlepage\else\insertsectionhead\fi};
+      \node[text=white,font=\scriptsize,anchor=east,inner xsep=4mm,align=left] at (logo.west)
+        {\ifdefvoid{\inserthashtag}{}{\inserthashtag}};
+    \end{tikzpicture}
+%<class>  \fi
+%<<LITERATE
+}
+%
+% To make the section heading all small caps, we need to patch the
+% |\sectionentry| and |\beamer@section| commands.
+%
+\patchcmd{\sectionentry}%
+  {\def\insertsectionhead{#2}}%
+  {\def\insertsectionhead{\MakeLowercase{#2}}}%
+  {}{\message{Patching sectionentry failed!}}
+\patchcmd{\beamer@section}%
+  {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{#1}}}%
+  {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{\MakeLowercase{#1}}}}%
+  {}{}
+%
+% We use a right sidebar containing a clock-style progress counter.
+% The mathematics here makes sure the indicator would start at 0° on the
+% first slide and end up at 360° on the last, with linear variation
+% between. The case of the first slide is handled differently to prevent
+% division by zero.
+%
+\setbeamersize{sidebar width right=7mm}
+\defbeamertemplate*{sidebar right}{progress}{%
+  \vfill
+  \parbox{7mm}{\centering
+    \usebeamercolor{progress}%
+%LITERATE
+    \begin{tikzpicture}
+      \pgfmathparse{equal(\inserttotalframenumber,1)}%
+      \ifnum1=\pgfmathresult
+        \def\PerCentComplete{360}%
+      \else
+        \pgfmathqparse{(360pt * (\insertframenumber pt - 1pt)) / (\inserttotalframenumber pt - 1pt)}%
+        \let\PerCentComplete\pgfmathresult
+      \fi
+      \draw[fg,fill=bg] (0,0mm)
+        -- (90:2.1mm)
+        arc[start angle=90, delta angle=-\PerCentComplete, radius=2.1mm]
+        -- cycle;
+      \draw[fg] (0,0) circle[radius=2.1mm];
+    \end{tikzpicture}%
+%<<LITERATE
+  \par}\par
+  \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
+  \vskip 4pt
+}
+%
+%
+% This setting would, if we let it, spill over to subsequent slides. To stop
+% this, we reset it as part of the set-up of `frame' environments.
+%
+\preto\beamer@reseteecodes{\bgpicturefalse\titlepagefalse}
+
+%
+% This is our new version of the `frametitle' template.
+%
+\defbeamertemplate*{frametitle}{bathtitle}{%
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \begin{beamercolorbox}{frametitle}
+    \usebeamerfont{frametitle}%
+    \vbox{}\vskip 14mm%
+    \strut\insertframetitle\strut\par%
+    {%
+      \ifdefvoid{\insertframesubtitle}{}{%
+        \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par
+      }%
+    }%
+    \vskip-1ex%
+  \end{beamercolorbox}%
+}
+
+%
+% By default we remove the tell-tale and seldom used 'beamer' navigation symbols.
+%
+\setbeamertemplate{navigation symbols}{}
+
+%
+% By default 'beamer' uses Roman numerals for split frames. We change this to
+% Arabic numerals.
+%
+\setbeamertemplate{frametitle continuation}{%
+  (\insertcontinuationcount)%
+}
+
+%
+% The 'beamer' title page template lays out the elements of the title page.
+%
+\def\maketitlehooka{}
+\def\maketitlehookb{\vskip1em\par}
+\def\maketitlehookc{}
+\def\maketitlehookd{}
+\def\maketitlehooke{\vskip0.5em\par}
+\def\maketitlehookf{}
+
+\setbeamertemplate{title page}{%
+  \global\titlepagetrue
+%
+% We add a strut to account for the blue bar at the top, then put the main
+% bibliographic metadata in the middle, then any licence information at the
+% bottom.
+%
+  \vbox to 20mm{}
+  \vfill
+  \begin{centering}
+    \maketitlehooka
+    \begin{beamercolorbox}[sep=8pt,center]{title}
+      \usebeamerfont{title}\inserttitle\par%
+      \ifdefvoid{\insertsubtitle}{}{%
+        \vskip 0.25em%
+        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
+      }%
+    \end{beamercolorbox}%
+    \maketitlehookb
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}\insertauthor
+    \end{beamercolorbox}
+    \maketitlehookc
+    \begin{beamercolorbox}[sep=8pt,center]{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \maketitlehookd
+    \begin{beamercolorbox}[sep=8pt,center]{date}
+      \usebeamerfont{date}%
+      \ifdefvoid{\insertoccasion}{}{\insertoccasion\\}%
+      \printdate{\insertdate}
+    \end{beamercolorbox}
+    \maketitlehooke
+    {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+    \maketitlehookf
+  \end{centering}
+  \vfill
+  \begin{beamercolorbox}[center]{institute}
+    \usebeamerfont{institute}
+    \begin{tabular}{@{}m{6em}m{25em}@{}}
+      \ifdefvoid{\licenseLogo}{}{%
+        \ifdefvoid{\licenseUrl}{\licenseLogo}{\href{\licenseUrl}{\licenseLogo}}%
+      } &
+      \ifdefvoid{\licenseStatement}{}{\licenseStatement} \\
+    \end{tabular}
+  \end{beamercolorbox}
+}
+
+%
+% We provide a |\finale| command for use on the last slide, to parallel
+% |\maketitle|. It behaves differently depending on the mode; the article
+% version uses 'tabularx'.
+%
+\RequirePackage{tabularx}
+\newcommand{\finale}[1][\empty]{
+%
+% Finale slides act like title slides.
+%
+\mode<presentation>{%
+  \global\titlepagetrue
+%
+% We add a strut to account for the blue bar at the top, then use stretchy
+% skips to place the remaining content in the middle of the slide.
+%
+  \vbox to 20mm{}%
+  \vfill
+%
+% We start with a thank you.
+%
+  \begin{beamercolorbox}[sep=8pt,center]{title}
+    \usebeamerfont{title}Thank you for your attention\par%
+  \end{beamercolorbox}%
+  \vskip1em\par
+%
+% If the author URL has been provided, we display that.
+%
+  \ifdefvoid{\insertauthorurl}{}{%
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}\insertauthor: \url{\insertauthorurl}\par%
+    \end{beamercolorbox}%
+  }%
+%
+% If a group URL has been provided, we display that.
+%
+  \ifdefvoid{\uobGroupUrl}{}{%
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}%
+      \ifdefvoid{\uobGroupName}{}{\uobGroupName: }%
+      \url{\uobGroupUrl}\par%
+    \end{beamercolorbox}%
+  }%
+%
+% Lastly, we display whatever is in the optional argument, if one has been
+% provided.
+%
+  \ifx\empty#1
+  \else
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}#1\par%
+    \end{beamercolorbox}%
+  \fi
+  \vfill
+  \vbox{}
+}
+%
+% In article mode, we begin with a horizontal rule.
+%
+\mode<article>{
+  \vbox{}
+  \begin{small}
+    \rule[1em]{\textwidth}{0.8pt}\par\nopagebreak
+%
+% We then draw a table with logos on the left and corresponding text on the
+% right.
+%
+    \setlength{\extrarowheight}{1ex}%
+    \renewcommand{\tabularxcolumn}[1]{m{##1}}%
+    \begin{tabularx}{\textwidth}{@{}m{22mm}X@{}}
+%
+% If a licence statement has been provided, we add a row displaying it.
+%
+    \ifdefvoid{\licenseStatement}{}{%
+      \ifdefvoid{\licenseLogo}{}{\parbox[c]{\hsize}{\licenseLogo}}%
+      &
+      \licenseStatement
+      \ifdefvoid{\licenseUrl}{}{: \url{\licenseUrl}} \\
+    }%
+%
+% We then add a row about the group.
+%
+    \parbox[c]{\hsize}{\includegraphics[width=\hsize]{uob-logo-grey-transparent}} &
+    University of Bath\ifdefvoid{\uobGroupName}{}{, \uobGroupName}.
+    For more information, please visit
+    \ifdefvoid{\uobGroupUrl}{\url{http://www.bath.ac.uk/}}{\url{\uobGroupUrl}}\\
+    \end{tabularx}
+%
+% Lastly, if the optional argument has been provided, we typeset it below the
+% table.
+%
+    \ifx\empty#1\else\par\vskip2pt #1\par\fi
+  \end{small}
+}
+}
+%LITERATE
+%</class>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\newif\ifThisIsTheMainRun
+\makeatletter
+\protected@edef\su@SubString{-}%
+\protected@edef\su@String{\jobname}%
+\def\su@compare#1-#2\@nil{%
+  \def\su@param{#2}%
+  \ifx\su@param\@empty
+    \expandafter\@secondoftwo
+  \else
+    \expandafter\@firstoftwo
+  \fi
+}%
+\def\su@comp@compare#1#2{\su@compare#2\@nnil#1\@nil}%
+\expandafter\expandafter\expandafter\su@comp@compare%
+\expandafter\expandafter\expandafter{%
+\expandafter\su@SubString\expandafter
+}\expandafter{\su@String}%
+{\ThisIsTheMainRunfalse}{\ThisIsTheMainRuntrue}
+\makeatother
+\ifThisIsTheMainRun
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+
+----------------------------------------------------------------
+The bathslides class: University of Bath presentations
+Author:  Alex Ball
+E-mail:  a.ball@ukoln.ac.uk
+License: Released under the LaTeX Project Public License v1.3c or later
+See:     http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+\endpreamble
+\postamble
+
+Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
+\endpostamble
+
+\usedir{tex/latex/bathslides}
+\generate{
+  \file{bathslides.cls}{\from{\jobname.dtx}{class}}
+}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\usedir{source/latex/bathslides}
+\generate{
+  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
+}
+\nopreamble\nopostamble
+\usedir{doc/latex/bathslides}
+\generate{
+  \file{README.md}{\from{\jobname.dtx}{readme}}
+}
+\fi
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+
+%</internal>
+%<*driver>
+\ProvidesFile{bathslides.dtx}
+    [\Version\ Class for University of Bath presentations]
+\documentclass[set]{bathslides}
+
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage[scaled=0.96,sups]{XCharter}
+  \usepackage[scaled=0.95,tabular]{sourcesanspro}
+  \usepackage[varl,varqu]{zi4}
+\else
+  \usepackage{fontspec}
+  \setmainfont
+    [Scale=0.96
+    ,Ligatures=TeX
+    ]%
+    {XCharter}
+  \setsansfont
+    [Scale=MatchLowercase
+    ,Ligatures=TeX
+    ,StylisticSet=4
+    ,BoldFont={Source Sans Pro Bold}
+    ,ItalicFont={Source Sans Pro Italic}
+    ,BoldItalicFont={Source Sans Pro Bold Italic}
+    ]%
+    {Source Sans Pro}
+  \setmonofont
+    [Scale=MatchLowercase
+    ,RawFeature={extend=0.83}
+    ,BoldFont={Source Code Pro Bold}
+    ,ItalicFont={Source Code Pro Italic}
+    ,BoldItalicFont={Source Code Pro Bold Italic}
+    ,ItalicFeatures={FakeSlant=0.04}
+    ,BoldItalicFeatures={FakeSlant=0.04}
+    ]%
+    {Source Code Pro}
+\fi
+\usepackage{metalogo}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{listings,breakable}
+\lstloadlanguages{[LaTeX]TeX}
+\lstset
+  { columns=fullflexible
+  , aboveskip=0pt
+  , belowskip=0pt
+  , basicstyle=\ttfamily
+  , language={[LaTeX]TeX}
+  , texcsstyle=*\color{red!75!black}
+  , moredelim=**[s][\color{violet}]{[}{]}
+  , moredelim=**[s][\color{blue!75!black}]{\{}{\}}
+  , commentstyle=\itshape\color{gray}
+  , basicstyle=\small\ttfamily
+  , breaklines=true
+  , escapechar=
+  }
+\def\cmds
+{ Version
+, ProvidesClass
+, ProvidesPackage
+, DeclareOption
+, ProcessOptions
+, LoadClass
+, RequirePackage
+, PassOptionsToPackage
+, IfFileExists
+, AtBeginDocument
+, description
+, enddescription
+, undefined
+, @empty
+, @gobble
+, @title
+, @author
+, @date
+, @maketitle
+, z@
+, @plus
+, @minus
+, @tempdima
+, @tempdimb
+, if@tempswa
+, setlength
+, usefonttheme
+, setbeamerfont
+, usebeamerfont
+, setbeamercolor
+, usebeamercolor
+, ifbeamercolorempty
+, defbeamertemplate
+, setbeamertemplate
+, addtobeamertemplate
+, mode
+, subject
+, frametitle
+, insertframetitle
+, framesubtitle
+, insertframesubtitle
+, inserttitle
+, insertsubtitle
+, insertauthor
+, insertinstitute
+, insertdate
+, inserttitlegraphic
+, insertframenumber
+, inserttotalframenumber
+, pgfpagesuselayout
+, pgfmathparse
+, pgfmathqparse
+, pgfmathresult
+, beamer@originstitute
+, beamer@andinst
+, beamer@insttitle
+, beamer@instinst
+, beamer@reseteecodes
+, beamerleftmargin
+, beamerrightmargin
+, setbeamersize
+, xdefinecolor
+, providecolor
+, usetikzlibrary
+, node
+, ifthenelse
+, ifPDFTeX
+, IfEndWith
+, setlist
+, newlist
+, hypersetup
+, define@key
+, setkeys
+, patchcmd
+, preto
+, ifundef
+, ifdefvoid
+, includegraphics
+, printdate
+, extrarowheight
+, tabularxcolumn
+}
+\newcommand*{\cmd}[1]{\gappto\cmds{, #1}\textcolor{red!75!black}{\textbackslash\texttt{#1}}}
+\newcommand*{\barg}[1]{$\langle${\normalfont\emph{#1}}$\rangle$}
+\newcommand*{\marg}[1]{\textcolor{blue!75!black}{\texttt{\{}\barg{#1}\texttt{\}}}}
+\newcommand*{\prm}[1]{\textcolor{blue!75!black}{\texttt{#1}}}
+\newcommand*{\oarg}[1]{\textcolor{violet}{\texttt{[}\barg{#1}\texttt{]}}}
+\newcommand*{\opt}[2][\empty]{\textcolor{violet}{\ttfamily #2}\ifx\empty#1\else\hfill(#1)\fi}
+\usepackage{enumitem}
+\def\ChangeItem{%
+  \let\origitem\item
+  \renewcommand{\item}[1][]{\origitem[{\makebox[\textwidth][l]{\strut\normalfont ##1}}]}
+}
+\newenvironment{describe}[1][]{%
+  \begin{description}%
+    [style=nextline
+    ,before={\ChangeItem}
+    ,#1]
+}{
+  \end{description}
+}
+
+% For typesetting the implementation
+\usepackage{makedoc}
+\usepackage{niceverb}
+\renewcommand{\SetOffInlineCmdBox}{\textcolor{red!75!black}}
+\renewcommand*{\TreatAsCode}[1]{%
+  \ifPackageCode
+  \else
+    \WriteResult{\string\begin{tcblisting}{breakable,listing only,listing options={firstnumber=last}}}%
+    \PackageCodeTrue
+  \fi
+  \WriteResult{#1}%
+}
+\renewcommand*{\TreatAsComment}[1]{%
+  \ifPackageCode
+    \WriteResult{\string\end{tcblisting}}%
+    \WriteResult{}
+    \PackageCodeFalse
+    \EveryComment
+  \fi
+  \WriteResult{#1}%
+}
+\makeatletter
+\PushCatMakeLetter\_
+\renewcommand*{\make_doc_arg}[1]{%
+  \makedoc_maybe_autocorr
+  \ifnum\value{lstnumber}>\z@
+    \WriteResult{\string\begin{tcblisting}{breakable,listing only,listing options={firstnumber=1}}}%
+    \PackageCodeTrue
+  \else
+    \PackageCodeFalse
+  \fi
+  \ProcessFileWith{#1}{%
+    \CountInputLines
+    \makedoc_line_body
+    \process_line_message
+  }%
+  \ifPackageCode
+    \WriteResult{\string\end{tcblisting}}
+    \PackageCodeFalse
+  \fi
+}
+\PopLetterCat\_
+\makeatother
+
+% \def\licenseLogo{\includegraphics[width=\hsize]{cc_by}}
+% \def\licenseStatement{Except where otherwise stated, %
+% this work is licensed under the Creative Commons Attribution 4.0 International licence}
+% \def\licenseUrl{https://creativecommons.org/licenses/by/4.0/}
+% \def\uobGroupName{Library Research Data Service}
+% \def\uobGroupUrl{http://www.bath.ac.uk/research/data/}
+
+\usepackage{readprov}
+\GetFileInfo{bathslides.cls}
+\title{The \protect\textsf{bathslides} class: University of Bath presentations}
+\author{Alex Ball}
+\authorurl{http://alexball.me.uk/}
+\institute{University of Bath}
+\StrSubstitute{\filedate}{/}{-}[\IsoFileDate]
+\date{\IsoFileDate}
+\occasion{A departmental course}
+\hashtag{dummy}
+
+\begin{document}
+\noNiceVerb
+\begin{frame}
+\maketitle
+\end{frame}
+
+\begin{abstract}
+This is the documentation for and a demonstration of \filename, ‘\fileinfo’, \fileversion, dated \printdateTeX{\filedate}.
+\end{abstract}
+
+\section{Usage}
+
+\subsection{Loading the class}
+
+\begin{frame}[fragile]{Using the class}
+The class is loaded in the usual way.
+
+\begin{tcblisting}{listing only, no listing options}
+\documentclass{bathslides}
+\end{tcblisting}
+
+The class defaults to producing slides. You can change this with an option:
+\begin{describe}
+\item[\opt{handout}]
+Lay slides out two to an A4 page, for easy printing.
+\item[\opt{article}]
+Produce a document in article mode: useful for transcripts.
+\item[\opt{set}]
+Produce a document in article mode, plus a set of slides (suffixed with
+‘\texttt{-slides}’).
+\end{describe}
+\end{frame}
+
+Note that the \texttt{set} option makes a \lstinline{\write18} call to \textsf{latexmk}, so if \lstinline{\write18} is not enabled, or \textsf{latexmk} is not installed, it will act much like the \opt{article} option.
+
+\subsection{Preamble metadata}
+
+\begin{frame}{Metadata}
+When filling out the document metadata, you can use the regular \textsf{beamer} conventions with a few differences:
+
+\begin{describe}
+\item[\cmd{date}\marg{ISO date}]
+Enter the date in ISO format, e.g.\ 2011-12-13.
+\item[\cmd{occasion}\marg{event name}]
+Use this to provide the name of the event where the presentation will be given.
+\item[\cmd{authorurl}\marg{URL}]
+Use this to provide a URL where more details about the author may be consulted (not so useful for multi-author presentations).
+\item[\cmd{hashtag}\marg{hashtag}]
+Use this to specify exactly one hashtag for sharing on social media. Omit the hash (\#), as the class will add it for you.
+\end{describe}
+\end{frame}
+
+\subsection{Customizing the title slide}
+
+You can add elements to the title slide by using the hooks provided. (The hooks are also recognized in article mode but they mainly affect the \cmd{finale} command, of which more later.) You use the hooks by defining them, so to use \cmd{uobGroupName}, for example, you would need to do something like this:
+\renewcommand*{\do}[1]{\lstset{moretexcs={#1}}}%
+\expandafter\docsvlist\expandafter{\cmds}%
+\begin{tcblisting}{listing only, no listing options}
+\def\uobGroupName{Metadata}
+\end{tcblisting}
+
+\begin{frame}{Hooks (Group)}
+You can associate your presentation with a particular faculty, department, service or group
+within the University by defining the following hooks.
+
+\begin{describe}
+  \item[\cmd{uobGroupName}]
+  The name of the group within the University, e.g. ‘Library Research Services’.
+  \item[\cmd{uobGroupUrl}]
+  The full URL of the group's home page.
+\end{describe}
+\end{frame}
+
+\begin{frame}{Hooks (Licence)}
+If releasing the presentation under licence, you can declare this by defining
+the following hooks.
+
+\begin{describe}
+\item[\cmd{licenseLogo}]
+This should insert the logo of the licence under which the presentation is released, if applicable. Again, for best results, scale it to fit the width of the bounding box, e.g.\ \cmd{insertgraphics}%
+\opt{[width=\cmd{hsize}]}\marg{filename}.
+\item[\cmd{licenseStatement}]
+A notice concerning the licence, e.g.\ ‘Released under an X licence.’
+\item[\cmd{licenseUrl}]
+The URL of the full licence text, if applicable.
+\end{describe}
+\end{frame}
+
+\subsection{Composing your presentation}
+
+The class is set up to ignore non-frame text in presentation mode, and ignore frame titles in article mode. The idea is that you put additional commentary outside frames, and it shows up in the transcript but not the slides. With pictorial slides, you can wrap them in \texttt{figure} environments, and with textual slides you can run them into the text of the commentary.
+
+In article mode, article-only text is shown in a serif font, while text that also appears on a slide is shown in a sans serif font, so you can tell them apart.
+
+\begin{frame}[fragile]{Frame background}
+The class provides a new option for frames.
+
+\begin{describe}
+\item[{\opt[default: no background]{background=\barg{filename}}}]
+Use this option on its own (or omit it) to use the usual plain white background.
+Use it with an image filename to use that image as the background instead.
+\end{describe}
+\end{frame}
+
+Note that the background image should suit a 4:3 aspect ratio as it will be stretched to fit. As a reminder, \textsf{beamer} slides are 128\,mm $\times$ 96\,mm.
+
+This option has no effect in article mode.
+
+\subsection{Finishing off}
+
+\begin{frame}[fragile]{Finishing off}
+You can insert a closing slide in your presentation to parallel your opening slide.
+
+\begin{describe}
+\item[\cmd{finale}\oarg{important note}]
+The optional argument lets you add an important note, such as a key link or date, to the end of the slide.
+Wrap the command in a bare frame, as you would for \cmd{maketitle}:
+\begin{tcolorbox}
+\cmd{begin}\prm{\{frame\}}\\
+\cmd{finale}\\
+\cmd{end}\prm{\{frame\}}
+\end{tcolorbox}
+\end{describe}
+\end{frame}
+
+In article mode, \cmd{finale} inserts a postscript consisting of a horizontal line followed by the licence and group information.
+
+\begin{frame}
+\finale
+\end{frame}
+
+\newpage
+\section{Implementation}
+
+% New commands introduced by this class:
+\gappto{\cmds}{%
+, ifArticle
+, Articletrue
+, Articlefalse
+, ifSet
+, Settrue
+, Setfalse
+, ifHandout
+, Handouttrue
+, Handoutfalse
+, insertoccasion
+, inserthashtag
+, insertauthorurl
+, fixeddescription
+, endfixeddescription
+, ifbgpicture
+, bgpicturetrue
+, bgpicturefalse
+, bgpicture
+, iftitlepage
+, titlepagetrue
+, titlepagefalse
+, PerCentComplete
+, maketitlehooka
+, maketitlehookb
+, maketitlehookc
+, maketitlehookd
+, maketitlehooke
+, maketitlehookf
+}
+\renewcommand*{\do}[1]{\lstset{moretexcs={#1}}}
+\expandafter\docsvlist\expandafter{\cmds}
+\lstset
+  { numbers=left
+  , numberstyle=\footnotesize\itshape\color{gray}
+  , numbersep=20pt
+  }%
+\useNiceVerb
+
+\subsection{bathslides.cls}
+
+\renewcommand*{\mdJobName}{bathslides}
+\renewcommand*{\mdSectionLevelOne}{\expandafter\string\csname subsubsection\endcsname}
+\CopyFDconditionFromTo{PScomment}{comment}
+\MakeInputJobDoc[cls]{0}{\SectionLevelOneParseInput}
+
+\end{document}
+%</driver>
+% \fi
+%
+\endinput
