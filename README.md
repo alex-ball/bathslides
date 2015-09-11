@@ -12,7 +12,7 @@ Installation
 
 In order for the documentation to be typeset correctly, you will need
 to have the image files `uob-logo-grey-transparent.pdf` (for PDF) and
-`uob-logo-grey-transparent.pdf` (for DVI) somewhere TeX can find them.
+`uob-logo-grey-transparent.eps` (for DVI) somewhere TeX can find them.
 I recommend you place them in the same folder as `bathslides.dtx`
 while compiling the class and in the `tex/latex/bathslides` folder
 thereafter.
