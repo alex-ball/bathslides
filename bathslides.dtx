@@ -160,8 +160,8 @@ Ball][me].
   \PassOptionsToPackage{table}{xcolor}
   \RequirePackage[noamssymb]{beamerarticle}
 %
-% I find slide titles work better as section headings or captions, so we turn
-% off the default handling from 'beamerarticle'.
+% I find slide titles somewhat intrusive in article mode (unless repurposed as
+% float captions, say), so we turn off the default handling from 'beamerarticle'.
 %
   \renewcommand{\frametitle}[1]{}
   \renewcommand{\framesubtitle}[1]{}
@@ -188,8 +188,8 @@ Ball][me].
 %
 % == Internal conveniences ==
 %
-% We will need the 'etoolbox' package's patching utilities, and 'calc' will be
-% helpful for calculating lengths.
+% We will need the 'etoolbox' package's tests and patching utilities,
+% and 'calc' will be helpful for calculating lengths.
 %
 \RequirePackage{etoolbox, calc}
 
@@ -215,12 +215,20 @@ Ball][me].
 \setbeamerfont{footline}{size=\scriptsize}
 \setbeamerfont{alerted text}{series=\bfseries}
 %
-% The colour palette for the presentation.
+% The colour palette for the presentation:
+% \begin{itemize}
+% \item ‘primary’ is used for structural elements;
+% \item ‘contrast’ is used for the header bar, sidebar, and alerted text;
+% \item ‘warm’ is a pale yellow that is not used, but may be useful for a box
+%       background;
+% \item ‘cool’ is a pale grey that is not used, but may be useful for a box
+%       background.
+% \end{itemize}
 %
-\xdefinecolor{primary}{RGB}{69,83,95}%     main colour used for special text
-\xdefinecolor{contrast}{RGB}{59,147,166}%  highlight colour used in framing elements
-\xdefinecolor{warm}{RGB}{255,255,230}%     generic pale yellow for readability
-\xdefinecolor{cool}{RGB}{243,243,243}%     generic pale gray
+\xdefinecolor{primary}{RGB}{69,83,95}
+\xdefinecolor{contrast}{RGB}{59,147,166}
+\xdefinecolor{warm}{RGB}{255,255,230}
+\xdefinecolor{cool}{RGB}{243,243,243}
 %
 % We apply these to make a 'beamer' colour scheme.
 %
@@ -272,7 +280,7 @@ Ball][me].
 %
 % We define some new elements of metadata.
 % The |\occasion| command is used to record the event at which the presentation
-% is given. The content is available again via |\insertoccasion|.
+% is given. The content is available if provided via |\insertoccasion|.
 %
 \newcommand*{\occasion}[1]{%
   \def\insertoccasion{#1}%
@@ -283,7 +291,7 @@ Ball][me].
 }
 %
 % The |\hashtag| command is used to suggest a hashtag people can use to share
-% this presentation on social media. The content is available again via
+% this presentation on social media. The content is available if provided via
 % |\inserthashtag|
 %
 \let\inserthashtag\empty
@@ -292,7 +300,7 @@ Ball][me].
 }
 %
 % The |\authorurl| command is used to give a URL where more information about
-% the speaker is available. The content is available again via
+% the speaker is available. The content is available if provided via
 % |\insertauthorurl|
 %
 \newcommand*{\authorurl}[1]{%
@@ -307,7 +315,7 @@ Ball][me].
 \edef\@date{\the\year-\ifnum\month<10 0\fi\the\month-\ifnum\day<10 0\fi\the\day}
 %
 % The 'beamer' class takes care of adding presentation metadata to the PDF
-% properties, but the 'article' class doesn't. We achieve parity with some
+% properties, but 'beamerarticle' doesn't. We achieve parity with some
 % additional |\hypersetup|.
 %
 \mode<article>{
@@ -389,6 +397,10 @@ Ball][me].
 %
 % == Slide templates ==
 %
+% We allow a little more horizontal space by squeezing the margins
+%
+\setbeamersize{text margin left=4mm,text margin right=4mm}
+%
 % We introduce a switch, |\iftitlepage|, that can be used to provide a
 % different layout depending on whether this is a normal or a title slide.
 %
@@ -396,9 +408,18 @@ Ball][me].
 \newif\iftitlepage\titlepagefalse
 %<<LITERATE
 %
-% We allow a little more horizontal space by squeezing the margins
+% We provide another switch, |\ifbgpicture|, which is used to decide whether
+% to use the regular background (‘false’ – default) or a user-supplied image
+% (‘true’).
 %
-\setbeamersize{text margin left=4mm,text margin right=4mm}
+%LITERATE
+\newif\ifbgpicture\bgpicturefalse
+%<<LITERATE
+%
+% To prevent the settings for these switches persisting between slides, we reset
+% them as part of the set-up of `frame' environments.
+%
+\preto\beamer@reseteecodes{\bgpicturefalse\titlepagefalse}
 %
 % We allow users to replace the normal template with a background image.
 % Note that the image is distorted to fit the slide dimensions, so whatever one
@@ -406,14 +427,9 @@ Ball][me].
 % 
 % The method used is to save the filename of the image to |\bgpicture|, and let
 % the user change it with a frame option, `background'.
-% 
-% For this we define a Boolean switch, |\ifbgpicture|, which is used in the
-% regular 'beamer' template `background' to decide whether to include the
-% |\bgpicture|.
 %
 %LITERATE
 \newcommand{\bgpicture}{}
-\newif\ifbgpicture\bgpicturefalse
 \define@key{beamerframe}{background}[]{%
   \ifstrempty{#1}{%
     \bgpicturefalse
@@ -430,7 +446,7 @@ Ball][me].
 %
 % The normal template consists of a coloured bar and the University logo.
 % The coloured bar also contains the hashtag, if provided, and the
-% section titles.
+% section titles (unless this is a title slide).
 %
 %LITERATE
 %<class>  \else
@@ -461,7 +477,7 @@ Ball][me].
 \patchcmd{\sectionentry}%
   {\def\insertsectionhead{#2}}%
   {\def\insertsectionhead{\MakeLowercase{#2}}}%
-  {}{\message{Patching sectionentry failed!}}
+  {}{}
 \patchcmd{\beamer@section}%
   {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{#1}}}%
   {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{\MakeLowercase{#1}}}}%
@@ -498,12 +514,6 @@ Ball][me].
   \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
   \vskip 4pt
 }
-%
-%
-% This setting would, if we let it, spill over to subsequent slides. To stop
-% this, we reset it as part of the set-up of `frame' environments.
-%
-\preto\beamer@reseteecodes{\bgpicturefalse\titlepagefalse}
 
 %
 % This is our new version of the `frametitle' template.
@@ -538,6 +548,8 @@ Ball][me].
 
 %
 % The 'beamer' title page template lays out the elements of the title page.
+% Our custom version uses hooks not dissimilar to those provided by 'memoir',
+% in case any special effects are needed.
 %
 \def\maketitlehooka{}
 \def\maketitlehookb{\vskip1em\par}
@@ -545,14 +557,13 @@ Ball][me].
 \def\maketitlehookd{}
 \def\maketitlehooke{\vskip0.5em\par}
 \def\maketitlehookf{}
-
-\setbeamertemplate{title page}{%
-  \global\titlepagetrue
 %
 % We add a strut to account for the blue bar at the top, then put the main
 % bibliographic metadata in the middle, then any licence information at the
 % bottom.
 %
+\setbeamertemplate{title page}{%
+  \global\titlepagetrue
   \vbox to 20mm{}
   \vfill
   \begin{centering}
@@ -600,62 +611,62 @@ Ball][me].
 % version uses 'tabularx'.
 %
 \RequirePackage{tabularx}
-\newcommand{\finale}[1][\empty]{
+\newcommand{\finale}[1][\empty]{%
 %
 % Finale slides act like title slides.
 %
-\mode<presentation>{%
-  \global\titlepagetrue
+  \mode<presentation>{%
+    \global\titlepagetrue
 %
 % We add a strut to account for the blue bar at the top, then use stretchy
 % skips to place the remaining content in the middle of the slide.
 %
-  \vbox to 20mm{}%
-  \vfill
+    \vbox to 20mm{}%
+    \vfill
 %
 % We start with a thank you.
 %
-  \begin{beamercolorbox}[sep=8pt,center]{title}
-    \usebeamerfont{title}Thank you for your attention\par%
-  \end{beamercolorbox}%
-  \vskip1em\par
+    \begin{beamercolorbox}[sep=8pt,center]{title}
+      \usebeamerfont{title}Thank you for your attention\par%
+    \end{beamercolorbox}%
+    \vskip1em\par
 %
 % If the author URL has been provided, we display that.
 %
-  \ifdefvoid{\insertauthorurl}{}{%
-    \begin{beamercolorbox}[sep=8pt,center]{author}
-      \usebeamerfont{author}\insertauthor: \url{\insertauthorurl}\par%
-    \end{beamercolorbox}%
-  }%
+    \ifdefvoid{\insertauthorurl}{}{%
+      \begin{beamercolorbox}[sep=8pt,center]{author}
+        \usebeamerfont{author}\insertauthor: \url{\insertauthorurl}\par%
+      \end{beamercolorbox}%
+    }%
 %
 % If a group URL has been provided, we display that.
 %
-  \ifdefvoid{\uobGroupUrl}{}{%
-    \begin{beamercolorbox}[sep=8pt,center]{author}
-      \usebeamerfont{author}%
-      \ifdefvoid{\uobGroupName}{}{\uobGroupName: }%
-      \url{\uobGroupUrl}\par%
-    \end{beamercolorbox}%
-  }%
+    \ifdefvoid{\uobGroupUrl}{}{%
+      \begin{beamercolorbox}[sep=8pt,center]{author}
+        \usebeamerfont{author}%
+        \ifdefvoid{\uobGroupName}{}{\uobGroupName: }%
+        \url{\uobGroupUrl}\par%
+      \end{beamercolorbox}%
+    }%
 %
 % Lastly, we display whatever is in the optional argument, if one has been
 % provided.
 %
-  \ifx\empty#1
-  \else
-    \begin{beamercolorbox}[sep=8pt,center]{author}
-      \usebeamerfont{author}#1\par%
-    \end{beamercolorbox}%
-  \fi
-  \vfill
-  \vbox{}
-}
+    \ifx\empty#1
+    \else
+      \begin{beamercolorbox}[sep=8pt,center]{author}
+        \usebeamerfont{author}#1\par%
+      \end{beamercolorbox}%
+    \fi
+    \vfill
+    \vbox{}
+  }%
 %
 % In article mode, we begin with a horizontal rule.
 %
-\mode<article>{
-  \vbox{}
-  \begin{small}
+  \mode<article>{%
+    \vbox{}
+    \small
     \rule[1em]{\textwidth}{0.8pt}\par\nopagebreak
 %
 % We then draw a table with logos on the left and corresponding text on the
@@ -686,8 +697,8 @@ Ball][me].
 % table.
 %
     \ifx\empty#1\else\par\vskip2pt #1\par\fi
-  \end{small}
-}
+    \normalsize
+  }%
 }
 %LITERATE
 %</class>
@@ -845,6 +856,7 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
 , @minus
 , @tempdima
 , @tempdimb
+, c@page
 , if@tempswa
 , setlength
 , usefonttheme
@@ -870,6 +882,9 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
 , inserttitlegraphic
 , insertframenumber
 , inserttotalframenumber
+, insertcontinuationcount
+, insertsectionhead
+, beamer@section
 , pgfpagesuselayout
 , pgfmathparse
 , pgfmathqparse
@@ -882,16 +897,21 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
 , beamerleftmargin
 , beamerrightmargin
 , setbeamersize
+, inst
 , xdefinecolor
 , providecolor
 , usetikzlibrary
 , node
+, coordinate
 , ifthenelse
 , ifPDFTeX
 , IfEndWith
 , setlist
 , newlist
 , hypersetup
+, hyperlink
+, href
+, url
 , define@key
 , setkeys
 , patchcmd
@@ -1018,7 +1038,7 @@ Produce a document in article mode, plus a set of slides (suffixed with
 \end{describe}
 \end{frame}
 
-Note that the \texttt{set} option makes a \lstinline{\write18} call to \textsf{latexmk}, so if \lstinline{\write18} is not enabled, or \textsf{latexmk} is not installed, it will act much like the \opt{article} option.
+Note that the \opt{set} option makes a \lstinline{\write18} call to \textsf{latexmk}, so if \lstinline{\write18} is not enabled, or \textsf{latexmk} is not installed, it will act much like the \opt{article} option. CAUTION: If you intend to use the \opt{set} option, do NOT end your source filename with ‘\texttt{-slides}’.
 
 \subsection{Preamble metadata}
 
@@ -1043,7 +1063,7 @@ You can add elements to the title slide by using the hooks provided. (The hooks 
 \renewcommand*{\do}[1]{\lstset{moretexcs={#1}}}%
 \expandafter\docsvlist\expandafter{\cmds}%
 \begin{tcblisting}{listing only, no listing options}
-\def\uobGroupName{Metadata}
+\def\uobGroupName{Library Research Services}
 \end{tcblisting}
 
 \begin{frame}{Hooks (Group)}
@@ -1058,13 +1078,19 @@ within the University by defining the following hooks.
 \end{describe}
 \end{frame}
 
+Various elements in the slide template use the generic University teal colour. To use a departmental or faculty colour instead, use the normal \textsf{xcolor} mechanisms to redefine the colour ‘contrast’ as in the following example:
+
+\begin{tcblisting}{listing only, no listing options}
+\xdefinecolor{contrast}{RGB}{155,18,57}
+\end{tcblisting}
+
 \begin{frame}{Hooks (Licence)}
 If releasing the presentation under licence, you can declare this by defining
 the following hooks.
 
 \begin{describe}
 \item[\cmd{licenseLogo}]
-This should insert the logo of the licence under which the presentation is released, if applicable. Again, for best results, scale it to fit the width of the bounding box, e.g.\ \cmd{insertgraphics}%
+This should insert the logo of the licence under which the presentation is released, if applicable. For best results, scale it to fit the width of the bounding box, e.g.\ \cmd{insertgraphics}%
 \opt{[width=\cmd{hsize}]}\marg{filename}.
 \item[\cmd{licenseStatement}]
 A notice concerning the licence, e.g.\ ‘Released under an X licence.’
@@ -1084,14 +1110,14 @@ The class provides a new option for frames.
 
 \begin{describe}
 \item[{\opt[default: no background]{background=\barg{filename}}}]
-Use this option on its own (or omit it) to use the usual plain white background.
+Use this option on its own (or omit it) to use the usual blank background, header bar and sidebar.
 Use it with an image filename to use that image as the background instead.
+This option has no effect in article mode.
 \end{describe}
 \end{frame}
 
 Note that the background image should suit a 4:3 aspect ratio as it will be stretched to fit. As a reminder, \textsf{beamer} slides are 128\,mm $\times$ 96\,mm.
 
-This option has no effect in article mode.
 
 \subsection{Finishing off}
 
@@ -1110,7 +1136,7 @@ Wrap the command in a bare frame, as you would for \cmd{maketitle}:
 \end{describe}
 \end{frame}
 
-In article mode, \cmd{finale} inserts a postscript consisting of a horizontal line followed by the licence and group information.
+In article mode, \cmd{finale} inserts a postscript consisting of a horizontal line followed by the licence (if provided) and group or University information.
 
 \begin{frame}
 \finale
