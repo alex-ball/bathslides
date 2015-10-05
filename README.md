@@ -22,8 +22,9 @@ You can download `uob-logo-grey-transparent.eps` from the
 `epstopdf uob-logo-grey-transparent.eps`. The `epstopdf` utility is
 available in most TeX distributions.
 
-The documentation uses fonts from the XCharter, sourcesanspro,
-sourcecodepro and inconsolata packages.
+The documentation uses fonts from the XCharter and sourcesanspro
+packages, as well as sourcecodepro if XeLaTeX or LuaLaTeX is used,
+or zi4 (inconsolata) otherwise.
 
 ### Automated way ###
 

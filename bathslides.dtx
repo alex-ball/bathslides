@@ -30,8 +30,9 @@ You can download `uob-logo-grey-transparent.eps` from the
 `epstopdf uob-logo-grey-transparent.eps`. The `epstopdf` utility is
 available in most TeX distributions.
 
-The documentation uses fonts from the XCharter, sourcesanspro,
-sourcecodepro and inconsolata packages.
+The documentation uses fonts from the XCharter and sourcesanspro
+packages, as well as sourcecodepro if XeLaTeX or LuaLaTeX is used,
+or zi4 (inconsolata) otherwise.
 
 ### Automated way ###
 
@@ -782,26 +783,26 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
 \ifPDFTeX
   \usepackage[utf8]{inputenc}
   \usepackage[T1]{fontenc}
+  \let\priorfamilydefault\familydefault
   \usepackage[scaled=0.96,sups]{XCharter}
   \usepackage[scaled=0.95,tabular]{sourcesanspro}
   \usepackage[varl,varqu]{zi4}
+  \let\familydefault\priorfamilydefault
 \else
   \usepackage{fontspec}
-  \setmainfont
+  \setmainfont{XCharter}%
     [Scale=0.96
     ,Ligatures=TeX
-    ]%
-    {XCharter}
-  \setsansfont
+    ]
+  \setsansfont{Source Sans Pro}%
     [Scale=MatchLowercase
     ,Ligatures=TeX
     ,StylisticSet=4
     ,BoldFont={Source Sans Pro Bold}
     ,ItalicFont={Source Sans Pro Italic}
     ,BoldItalicFont={Source Sans Pro Bold Italic}
-    ]%
-    {Source Sans Pro}
-  \setmonofont
+    ]
+  \setmonofont{Source Code Pro}%
     [Scale=MatchLowercase
     ,RawFeature={extend=0.83}
     ,BoldFont={Source Code Pro Bold}
@@ -809,8 +810,7 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
     ,BoldItalicFont={Source Code Pro Bold Italic}
     ,ItalicFeatures={FakeSlant=0.04}
     ,BoldItalicFeatures={FakeSlant=0.04}
-    ]%
-    {Source Code Pro}
+    ]
 \fi
 \usepackage{metalogo}
 
