@@ -552,12 +552,13 @@ Ball][me].
 % Our custom version uses hooks not dissimilar to those provided by 'memoir',
 % in case any special effects are needed.
 %
-\def\maketitlehooka{}
-\def\maketitlehookb{\vskip1em\par}
-\def\maketitlehookc{}
-\def\maketitlehookd{}
-\def\maketitlehooke{\vskip0.5em\par}
-\def\maketitlehookf{}
+\def\hookpretitle{}
+\def\hooktitleauthor{\par\bigskip}
+\def\hookauthorinstitute{}
+\def\hookinstituteoccasion{\par\bigskip}
+\def\hookoccasiondate{\par\smallskip}
+\def\hookdategraphic{\par\smallskip}
+\def\hookpostgraphic{}
 %
 % We add a strut to account for the blue bar at the top, then put the main
 % bibliographic metadata in the middle, then any licence information at the
@@ -568,7 +569,7 @@ Ball][me].
   \vbox to 20mm{}
   \vfill
   \begin{centering}
-    \maketitlehooka
+    \hookpretitle
     \begin{beamercolorbox}[sep=8pt,center]{title}
       \usebeamerfont{title}\inserttitle\par%
       \ifdefvoid{\insertsubtitle}{}{%
@@ -576,23 +577,24 @@ Ball][me].
         {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
       }%
     \end{beamercolorbox}%
-    \maketitlehookb
-    \begin{beamercolorbox}[sep=8pt,center]{author}
+    \hooktitleauthor
+    \begin{beamercolorbox}[sep=0pt,center]{author}
       \usebeamerfont{author}\insertauthor
     \end{beamercolorbox}
-    \maketitlehookc
-    \begin{beamercolorbox}[sep=8pt,center]{institute}
+    \hookauthorinstitute
+    \begin{beamercolorbox}[sep=0pt,center]{institute}
       \usebeamerfont{institute}\insertinstitute
     \end{beamercolorbox}
-    \maketitlehookd
+    \hookinstituteoccasion
     \begin{beamercolorbox}[sep=8pt,center]{date}
       \usebeamerfont{date}%
-      \ifdefvoid{\insertoccasion}{}{\insertoccasion\\}%
+      \ifdefvoid{\insertoccasion}{}{\insertoccasion}%
+      \hookoccasiondate
       \printdate{\insertdate}
     \end{beamercolorbox}
-    \maketitlehooke
+    \hookdategraphic
     {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
-    \maketitlehookf
+    \hookpostgraphic
   \end{centering}
   \vfill
   \begin{beamercolorbox}[center]{institute}
@@ -630,7 +632,7 @@ Ball][me].
     \begin{beamercolorbox}[sep=8pt,center]{title}
       \usebeamerfont{title}Thank you for your attention\par%
     \end{beamercolorbox}%
-    \vskip1em\par
+    \par\bigskip
 %
 % If the author URL has been provided, we display that.
 %
