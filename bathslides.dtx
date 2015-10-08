@@ -124,6 +124,21 @@ Ball][me].
 \DeclareOption{article}{\Articletrue}
 \DeclareOption{handout}{\Handouttrue\PassOptionsToClass{handout}{beamer}}
 \DeclareOption{set}{\Settrue}
+%
+% In addition, different parts of the university use different colours. We
+% provide these as options.
+%
+\DeclareOption{darkgrey}{\def\bathslides@contrast{Grey}}
+\DeclareOption{university}{\def\bathslides@contrast{University}}
+\DeclareOption{study}{\def\bathslides@contrast{Study}}
+\DeclareOption{business}{\def\bathslides@contrast{Business}}
+\DeclareOption{research}{\def\bathslides@contrast{Research}}
+\DeclareOption{depts}{\def\bathslides@contrast{Departments}}
+\DeclareOption{engineering}{\def\bathslides@contrast{Engineering}}
+\DeclareOption{humsocsci}{\def\bathslides@contrast{Humanities}}
+\DeclareOption{science}{\def\bathslides@contrast{Science}}
+\DeclareOption{management}{\def\bathslides@contrast{Management}}
+\ExecuteOptions{university}
 \ProcessOptions\relax
 
 %
@@ -219,20 +234,45 @@ Ball][me].
 \setbeamerfont{footline}{size=\scriptsize}
 \setbeamerfont{alerted text}{series=\bfseries}
 %
+% The University colour palette has four primary colours (White, Slate, Grey,
+% and Bath stone)\dots
+%
+\xdefinecolor{Slate}{RGB}{80,86,94}
+\xdefinecolor{Grey}{RGB}{72,69,66}
+\xdefinecolor{BathStone}{RGB}{213,211,185}
+%
+% \dots five section colours (University, Study, Business, Research, and
+% Departments)\dots
+%
+\xdefinecolor{University}{RGB}{9,70,133}
+\xdefinecolor{Study}{RGB}{130,154,52}
+\xdefinecolor{Business}{RGB}{85,39,119}
+\xdefinecolor{Research}{RGB}{59,147,166}
+\xdefinecolor{Departments}{RGB}{136,62,40}
+%
+% \dots four faculty colours (Engineering and Design, Humanities and Social
+% Sciences, Science, and School of Management)\dots
+%
+\xdefinecolor{Engineering}{RGB}{193,112,34}
+\xdefinecolor{Humanities}{RGB}{161,0,111}
+\xdefinecolor{Science}{RGB}{171,182,37}
+\xdefinecolor{Management}{RGB}{0,156,228}
+%
+% \dots and four highlight colours (Violet, Lime, Clerical, Slush Puppy).
+%
+\xdefinecolor{Violet}{RGB}{152,125,176}
+\xdefinecolor{Lime}{RGB}{211,216,82}
+\xdefinecolor{Clerical}{RGB}{188,92,150}
+\xdefinecolor{SlushPuppy}{RGB}{177,215,237}
+%
 % The colour palette for the presentation:
 % \begin{itemize}
 % \item ‘primary’ is used for structural elements;
 % \item ‘contrast’ is used for the header bar, sidebar, and alerted text;
-% \item ‘warm’ is a pale yellow that is not used, but may be useful for a box
-%       background;
-% \item ‘cool’ is a pale grey that is not used, but may be useful for a box
-%       background.
 % \end{itemize}
 %
-\xdefinecolor{primary}{RGB}{69,83,95}
-\xdefinecolor{contrast}{RGB}{59,147,166}
-\xdefinecolor{warm}{RGB}{255,255,230}
-\xdefinecolor{cool}{RGB}{243,243,243}
+\colorlet{primary}{Slate}
+\colorlet{contrast}{\bathslides@contrast}
 %
 % We apply these to make a 'beamer' colour scheme.
 %
@@ -818,6 +858,7 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
     ]
 \fi
 \usepackage{metalogo}
+\usepackage{multicol}
 
 \usepackage{tcolorbox}
 \tcbuselibrary{listings,breakable}
@@ -1044,6 +1085,36 @@ Produce a document in article mode, plus a set of slides (suffixed with
 \end{frame}
 
 Note that the \opt{set} option makes a \lstinline{\write18} call to \textsf{latexmk}, so if \lstinline{\write18} is not enabled, or \textsf{latexmk} is not installed, it will act much like the \opt{article} option. CAUTION: If you intend to use the \opt{set} option, do NOT end your source filename with ‘\texttt{-slides}’.
+
+\begin{frame}[fragile]{Using the class}
+The colour scheme can also be adjusted:
+\begin{multicols}{2}
+\begin{describe}
+\item[\opt{darkgrey}]
+\textcolor{Grey}{\rule{1em}{1em}}
+\item[\opt{university}\quad (default)]
+\textcolor{University}{\rule{1em}{1em}}
+\item[\opt{study}]
+\textcolor{Study}{\rule{1em}{1em}}
+\item[\opt{business}]
+\textcolor{Business}{\rule{1em}{1em}}
+\item[\opt{research}]
+\textcolor{Research}{\rule{1em}{1em}}
+\item[\opt{depts}]
+\textcolor{Departments}{\rule{1em}{1em}}
+\item[\opt{engineering}]
+\textcolor{Engineering}{\rule{1em}{1em}}
+\item[\opt{humsocsci}]
+\textcolor{Humanities}{\rule{1em}{1em}}
+\item[\opt{science}]
+\textcolor{Science}{\rule{1em}{1em}}
+\item[\opt{management}]
+\textcolor{Management}{\rule{1em}{1em}}
+\end{describe}
+\end{multicols}
+\end{frame}
+
+The top and side bars are affected by these options.
 
 \subsection{Preamble metadata}
 
