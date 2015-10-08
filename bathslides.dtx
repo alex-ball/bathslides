@@ -189,7 +189,7 @@ Ball][me].
 %<<LITERATE
   \LoadClass[ignorenonframetext,xcolor=table,noamssymb]{beamer}[2007/03/11]
   \usefonttheme{professionalfonts}
-  \RequirePackage{tikz}
+  \RequirePackage{tikz,tcolorbox}
 %
 % In handout mode, we lay out two slides to an A4 page. 
 %
@@ -360,14 +360,14 @@ Ball][me].
 %
 % The 'beamer' class takes care of adding presentation metadata to the PDF
 % properties, but 'beamerarticle' doesn't. We achieve parity with some
-% additional |\hypersetup|.
+% additional |\hypersetup|. Note that 'beamerarticle' appends the subtitle
+% to |\@title| with a linebreak; we adjust this so that a colon is used instead.
 %
 \mode<article>{
+  \renewcommand{\subtitle}[2][]{\def\insertsubtitle{#2}\g@addto@macro\@title{: #2}}
   \AtBeginDocument{
     \begingroup
-      \hypersetup{pdftitle={\@title
-        \ifdefvoid{\insertsubtitle}{}{\ - \insertsubtitle}%
-      }}%
+      \hypersetup{pdftitle={\@title}}%
     \def\and{\unskip, }%
     \let\thanks=\@gobble
     \let\inst=\@gobble
@@ -596,9 +596,9 @@ Ball][me].
 % in case any special effects are needed.
 %
 \def\hookpretitle{}
-\def\hooktitleauthor{\par\bigskip}
+\def\hooktitleauthor{\par\vskip1.5\bigskipamount}
 \def\hookauthorinstitute{}
-\def\hookinstituteoccasion{\par\bigskip}
+\def\hookinstituteoccasion{\par\vskip2\bigskipamount}
 \def\hookoccasiondate{\par\smallskip}
 \def\hookdategraphic{\par\smallskip}
 \def\hookpostgraphic{}
@@ -609,27 +609,39 @@ Ball][me].
 %
 \setbeamertemplate{title page}{%
   \global\titlepagetrue
-  \vbox to 20mm{}
-  \vfill
+  \vbox to 10mm{}
   \begin{centering}
     \hookpretitle
-    \begin{beamercolorbox}[sep=8pt,center]{title}
-      \usebeamerfont{title}\inserttitle\par%
-      \ifdefvoid{\insertsubtitle}{}{%
-        \vskip 0.25em%
-        {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}%
-      }%
+    \begin{beamercolorbox}[sep=0pt]{title}
+      \begin{tcolorbox}%
+      [width={\linewidth - 3mm}
+      ,arc=2mm
+      ,sharp corners
+      ,rounded corners=northeast
+      ,boxrule=0pt
+      ,colframe=Grey
+      ,colback=Grey
+      ,opacityframe=0.9
+      ,opacityback=0.9
+      ,coltext=white
+      ]
+        \usebeamerfont{title}\inserttitle\par%
+        \ifdefvoid{\insertsubtitle}{}{%
+          \vskip 0.25em%
+          {\usebeamerfont{subtitle}\insertsubtitle\par}%
+        }%
+      \end{tcolorbox}
     \end{beamercolorbox}%
     \hooktitleauthor
-    \begin{beamercolorbox}[sep=0pt,center]{author}
+    \begin{beamercolorbox}[leftskip=5mm]{author}
       \usebeamerfont{author}\insertauthor
     \end{beamercolorbox}
     \hookauthorinstitute
-    \begin{beamercolorbox}[sep=0pt,center]{institute}
+    \begin{beamercolorbox}[leftskip=5mm]{institute}
       \usebeamerfont{institute}\insertinstitute
     \end{beamercolorbox}
     \hookinstituteoccasion
-    \begin{beamercolorbox}[sep=8pt,center]{date}
+    \begin{beamercolorbox}[leftskip=5mm]{date}
       \usebeamerfont{date}%
       \ifdefvoid{\insertoccasion}{}{\insertoccasion}%
       \hookoccasiondate
@@ -640,7 +652,7 @@ Ball][me].
     \hookpostgraphic
   \end{centering}
   \vfill
-  \begin{beamercolorbox}[center]{institute}
+  \begin{beamercolorbox}[leftskip=5mm]{institute}
     \usebeamerfont{institute}
     \begin{tabular}{@{}m{6em}m{25em}@{}}
       \ifdefvoid{\licenseLogo}{}{%
@@ -1042,7 +1054,8 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
 
 \usepackage{readprov}
 \GetFileInfo{bathslides.cls}
-\title{The \protect\textsf{bathslides} class: University of Bath presentations}
+\title{The \protect\textsf{bathslides} class}
+\subtitle{University of Bath presentations}
 \author{Alex Ball}
 \authorurl{http://alexball.me.uk/}
 \institute{University of Bath}
