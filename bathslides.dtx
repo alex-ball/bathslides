@@ -561,7 +561,7 @@ Ball][me].
   \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
   \begin{beamercolorbox}{frametitle}
     \usebeamerfont{frametitle}%
-    \vbox{}\vskip 14mm%
+    \ifbool{beamer@plainframe}{}{\vbox to 23mm{}}%
     \strut\insertframetitle\strut\par%
     {%
       \ifdefvoid{\insertframesubtitle}{}{%
