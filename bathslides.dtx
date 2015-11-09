@@ -451,22 +451,18 @@ Ball][me].
 % We introduce a switch, |\iftitlepage|, that can be used to provide a
 % different layout depending on whether this is a normal or a title slide.
 %
-%LITERATE
-\newif\iftitlepage\titlepagefalse
-%<<LITERATE
+\newbool{titlepage}
 %
 % We provide another switch, |\ifbgpicture|, which is used to decide whether
 % to use the regular background (‘false’ – default) or a user-supplied image
 % (‘true’).
 %
-%LITERATE
-\newif\ifbgpicture\bgpicturefalse
-%<<LITERATE
+\newbool{bgpicture}
 %
 % To prevent the settings for these switches persisting between slides, we reset
 % them as part of the set-up of `frame' environments.
 %
-\preto\beamer@reseteecodes{\bgpicturefalse\titlepagefalse}
+\preto\beamer@reseteecodes{\boolfalse{bgpicture}\boolfalse{titlepage}}
 %
 % We allow users to replace the normal template with a background image.
 % Note that the image is distorted to fit the slide dimensions, so whatever one
@@ -475,47 +471,45 @@ Ball][me].
 % The method used is to save the filename of the image to |\bgpicture|, and let
 % the user change it with a frame option, `background'.
 %
-%LITERATE
 \newcommand{\bgpicture}{}
 \define@key{beamerframe}{background}[]{%
   \ifstrempty{#1}{%
-    \bgpicturefalse
+    \boolfalse{bgpicture}
   }{%
-    \gdef\bgpicture{#1}\bgpicturetrue
+    \gdef\bgpicture{#1}\booltrue{bgpicture}
   }%
 }
 \setbeamertemplate{background}{%
-  \ifbgpicture
+  \ifbool{bgpicture}{%
     \includegraphics[width=\paperwidth,height=\paperheight]{\bgpicture}%
     \setbeamersize{sidebar width right=0mm}%
     \setbeamertemplate{sidebar right}[default]%
-%<<LITERATE
 %
 % The normal template consists of a coloured bar and the University logo.
 % The coloured bar also contains the hashtag, if provided, and the
 % section titles (unless this is a title slide).
 %
-%LITERATE
-%<class>  \else
-    \begin{tikzpicture}[remember picture, overlay]
-      \coordinate[xshift=-9mm, yshift=-4mm] (logo-ne) at (current page.north east);
-      \node[inner sep=0pt,anchor=north east] (logo) at (logo-ne)
-        {\includegraphics[height=11mm]{uob-logo-grey-transparent}};
-      \coordinate[xshift=-1mm,yshift=-1.1mm] (topbar-ne) at (logo.north west);
-      \coordinate[xshift=-1mm,yshift=1.1mm] (topbar-se) at (logo.south west);
-      \fill[contrast] (topbar-se)
-        -- (topbar-se -| current page.north west)
-        -- (topbar-ne -| current page.north west) [rounded corners=2mm]
-        -- (topbar-ne) [sharp corners]
-        -- cycle;
-      \coordinate[yshift=-9.5mm] (topbar-text-w) at (current page.north west);
-      \node[text=white,font=\rmfamily\scshape,anchor=west,text width=7cm,inner xsep=4mm,align=left] at (topbar-text-w)
-%<class>        {\iftitlepage\else\insertsectionhead\fi};
-      \node[text=white,font=\scriptsize,anchor=east,inner xsep=4mm,align=left] at (logo.west)
-        {\ifdefvoid{\inserthashtag}{}{\inserthashtag}};
-    \end{tikzpicture}
-%<class>  \fi
-%<<LITERATE
+  }{%
+    \ifbool{beamer@plainframe}{}{%
+      \begin{tikzpicture}[remember picture, overlay]
+        \coordinate[xshift=-9mm, yshift=-4mm] (logo-ne) at (current page.north east);
+        \node[inner sep=0pt,anchor=north east] (logo) at (logo-ne)
+          {\includegraphics[height=11mm]{uob-logo-grey-transparent}};
+        \coordinate[xshift=-1mm,yshift=-1.1mm] (topbar-ne) at (logo.north west);
+        \coordinate[xshift=-1mm,yshift=1.1mm] (topbar-se) at (logo.south west);
+        \fill[contrast] (topbar-se)
+          -- (topbar-se -| current page.north west)
+          -- (topbar-ne -| current page.north west) [rounded corners=2mm]
+          -- (topbar-ne) [sharp corners]
+          -- cycle;
+        \coordinate[yshift=-9.5mm] (topbar-text-w) at (current page.north west);
+        \node[text=white,font=\rmfamily\scshape,anchor=west,text width=7cm,inner xsep=4mm,align=left] at (topbar-text-w)
+          {\ifbool{titlepage}{}{\insertsectionhead}};
+        \node[text=white,font=\scriptsize,anchor=east,inner xsep=4mm,align=left] at (logo.west)
+          {\ifdefvoid{\inserthashtag}{}{\inserthashtag}};
+      \end{tikzpicture}
+    }%
+  }%
 }
 %
 % To make the section heading all small caps, we need to patch the
@@ -541,7 +535,6 @@ Ball][me].
   \vfill
   \parbox{7mm}{\centering
     \usebeamercolor{progress}%
-%LITERATE
     \begin{tikzpicture}
       \pgfmathparse{equal(\inserttotalframenumber,1)}%
       \ifnum1=\pgfmathresult
@@ -556,7 +549,6 @@ Ball][me].
         -- cycle;
       \draw[fg] (0,0) circle[radius=2.1mm];
     \end{tikzpicture}%
-%<<LITERATE
   \par}\par
   \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
   \vskip 4pt
@@ -611,8 +603,8 @@ Ball][me].
 % bottom.
 %
 \setbeamertemplate{title page}{%
-  \global\titlepagetrue
-  \vbox to 14mm{}
+  \global\booltrue{titlepage}%
+  \vbox to 14mm{}%
   \begin{centering}
     \hookpretitle
     \begin{beamercolorbox}[sep=0pt]{title}
