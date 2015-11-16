@@ -9,7 +9,7 @@ UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 WORKMF = "/home/ab318/Data/TeX/workmf"
 all:	$(NAME).pdf $(NAME)-slides.pdf clean
 	exit 0
-$(NAME).pdf: $(NAME).dtx
+$(NAME).pdf: $(NAME).cls
 	latexmk -silent -lualatex -synctex=1 -interaction=batchmode $(NAME).dtx >/dev/null
 $(NAME).cls: $(NAME).dtx
 	lualatex -synctex=1 -interaction=batchmode $(NAME).dtx >/dev/null
