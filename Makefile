@@ -9,11 +9,11 @@ UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 WORKMF = "/home/ab318/Data/TeX/workmf"
 all:	$(NAME).pdf $(NAME)-slides.pdf clean
 	exit 0
-$(NAME).pdf: $(NAME).cls
-	latexmk -silent -lualatex -synctex=1 -interaction=batchmode $(NAME).dtx >/dev/null
 $(NAME).cls: $(NAME).dtx
 	lualatex -synctex=1 -interaction=batchmode $(NAME).dtx >/dev/null
-$(NAME)-slides.pdf: $(NAME).dtx $(NAME).cls
+$(NAME).pdf: $(NAME).cls
+	latexmk -silent -lualatex -synctex=1 -interaction=batchmode $(NAME).dtx >/dev/null
+$(NAME)-slides.pdf: $(NAME).cls
 	latexmk -silent -lualatex -synctex=1 -interaction=batchmode -jobname=$(NAME)-slides $(NAME).dtx >/dev/null
 clean:
 	rm -f $(NAME).{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,listing,log,nav,out,run.xml,snm,synctex.gz,toc,vrb}
