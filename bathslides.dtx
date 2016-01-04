@@ -18,11 +18,13 @@ Installation
 
 ### Pre-requisites ###
 
-In order for the documentation to be typeset correctly, you will need
-to have the image files `uob-logo-grey-transparent.pdf` (for PDF) and
+You should be able to extract the class file using only the base
+tools of a TeX installation, but in order for the documentation to be
+typeset correctly, you will need to have the image files
+`uob-logo-grey-transparent.pdf` (for PDF) and
 `uob-logo-grey-transparent.eps` (for DVI) somewhere TeX can find them.
 I recommend you place them in the same folder as `bathslides.dtx`
-while compiling the class and in the `tex/latex/bathslides` folder
+while compiling the class and in a `tex/generic/logos-ubath` folder
 thereafter.
 
 You can download `uob-logo-grey-transparent.eps` from the
@@ -44,6 +46,9 @@ A makefile is provided which you can use with the Make utility:
       - bathslides.pdf
       - bathslides-slides.pdf
       - bathslides.cls
+
+    It also downloads `uob-logo-grey-transparent.eps` using `wget` and
+    generates `uob-logo-grey-transparent.pdf` using `epstopdf`.
 
   * Running `make inst` installs the files (and images) in the user's
     TeX tree.
