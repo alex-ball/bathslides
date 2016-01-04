@@ -1161,6 +1161,7 @@ The colour scheme can also be adjusted:
 \end{frame}
 
 Behind the scenes, these options affect a colour named ‘\texttt{contrast}’.
+(Note that you could set that colour manually to something else if you wished.)
 In slide mode, it is used in the top and side bars, and for alerted text.
 It is not used by the class in article mode, but is available if you wish to use it yourself.
 
@@ -1201,12 +1202,6 @@ within the University by defining the following hooks.
   The full URL of the group's home page.
 \end{describe}
 \end{frame}
-
-Various elements in the slide template use the generic University teal colour. To use a departmental or faculty colour instead, use the normal \textsf{xcolor} mechanisms to redefine the colour ‘contrast’ as in the following example:
-
-\begin{tcblisting}{listing only, no listing options}
-\xdefinecolor{contrast}{RGB}{155,18,57}
-\end{tcblisting}
 
 \begin{frame}{Hooks (Licence)}
 If releasing the presentation under licence, you can declare this by defining
