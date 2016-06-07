@@ -347,14 +347,14 @@ Ball][me].
 % We make captions easier to spot. We try to make the placement of the final
 % period more intelligent using `\@addpunct' from 'amsthm'.
 %
-  \usepackage[format=hang,justification=raggedright,labelfont=bf]{caption}
-  \usepackage{amsthm}
+  \RequirePackage[format=hang,justification=raggedright,labelfont=bf]{caption}
+  \RequirePackage{amsthm}
   \DeclareCaptionTextFormat{condperiod}{#1\@addpunct{.}}
   \captionsetup{textformat=condperiod}
 %
 % We also make footnotes look a little neater.
 %
-  \usepackage[hang,multiple,bottom]{footmisc}
+  \RequirePackage[hang,multiple,bottom]{footmisc}
   \setlength{\footnotemargin}{1em}
 }
 
