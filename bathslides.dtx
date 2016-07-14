@@ -539,7 +539,7 @@ Ball][me].
           -- cycle;
         \coordinate[yshift=-9.5mm] (topbar-text-w) at (current page.north west);
         \node[text=white,font=\rmfamily\scshape,anchor=west,text width=7cm,inner xsep=4mm,align=left] at (topbar-text-w)
-          {\ifbool{titlepage}{}{\insertsectionhead}};
+          {\ifbool{titlepage}{}{\hypersetup{linkcolor=white}\insertsectionhead}};
         \node[text=white,font=\scriptsize,anchor=east,inner xsep=4mm,align=left] at (logo.west)
           {\ifdefvoid{\inserthashtag}{}{\inserthashtag}};
       \end{tikzpicture}
