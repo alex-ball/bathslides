@@ -1,7 +1,7 @@
 % \iffalse meta-comment
-%<*internal|class>
+%<*internal|class|palette|theme>
 \def\Version{2016/08/10 v3.0-pre}
-%</internal|class>
+%</internal|class|palette|theme>
 %<*internal>
 \iffalse
 %</internal>
@@ -259,60 +259,13 @@ Ball][me].
 \setbeamerfont{alerted text}{series=\bfseries}
 
 %
-% == University colour palette ==
-%
-% The University colour palette has four primary colours
-% (White \sample[0.7em]{white},
-% Slate \sample[0.7em]{Slate},
-% Grey \sample[0.7em]{Grey}, and
-% Bath stone \sample[0.7em]{BathStone})\dots
-%
-\xdefinecolor{Slate}{RGB}{80,86,94}
-\xdefinecolor{Grey}{RGB}{72,69,66}
-\xdefinecolor{BathStone}{RGB}{213,211,185}
-%
-% \dots five section colours
-% (University \sample[0.7em]{University},
-% Study \sample[0.7em]{Study},
-% Business \sample[0.7em]{Business},
-% Research \sample[0.7em]{Research}, and
-% Departments \sample[0.7em]{Departments})\dots
-%
-\xdefinecolor{University}{RGB}{9,70,133}
-\xdefinecolor{Study}{RGB}{130,154,52}
-\xdefinecolor{Business}{RGB}{85,39,119}
-\xdefinecolor{Research}{RGB}{59,147,166}
-\xdefinecolor{Departments}{RGB}{136,62,40}
-%
-% \dots four faculty colours
-% (Engineering and Design \sample[0.7em]{Engineering},
-% Humanities and Social Sciences \sample[0.7em]{Humanities},
-% Science \sample[0.7em]{Science}, and
-% School of Management \sample[0.7em]{Management})\dots
-%
-\xdefinecolor{Engineering}{RGB}{193,112,34}
-\xdefinecolor{Humanities}{RGB}{161,0,111}
-\xdefinecolor{Science}{RGB}{171,182,37}
-\xdefinecolor{Management}{RGB}{0,156,228}
-%
-% \dots and four highlight colours
-% (Violet \sample[0.7em]{Violet},
-% Lime \sample[0.7em]{Lime},
-% Clerical \sample[0.7em]{Clerical}, and
-% Slush Puppy \sample[0.7em]{SlushPuppy}).
-%
-\xdefinecolor{Violet}{RGB}{152,125,176}
-\xdefinecolor{Lime}{RGB}{211,216,82}
-\xdefinecolor{Clerical}{RGB}{188,92,150}
-\xdefinecolor{SlushPuppy}{RGB}{177,215,237}
-
-%
 % The colour palette for the presentation:
 % \begin{itemize}
 % \item ‘primary’ is used for structural elements;
 % \item ‘contrast’ is used for the header bar, sidebar, and alerted text;
 % \end{itemize}
 %
+\RequirePackage{bathcolors}
 \colorlet{primary}{Slate}
 \colorlet{contrast}{\bathslides@contrast}
 
@@ -750,6 +703,67 @@ Ball][me].
 }
 %LITERATE
 %</class>
+%<*palette>
+%<<LITERATE
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{bathcolors}
+    [\Version\space Colour palette for University of Bath documents]
+%
+% == University colour palette ==
+%
+% The University colour palette has four primary colours
+% (White \sample[0.7em]{white},
+% Slate \sample[0.7em]{Slate},
+% Grey \sample[0.7em]{Grey}, and
+% Bath stone \sample[0.7em]{BathStone})\dots
+%
+\xdefinecolor{Slate}{RGB}{80,86,94}
+\xdefinecolor{Grey}{RGB}{72,69,66}
+\xdefinecolor{BathStone}{RGB}{213,211,185}
+%
+% \dots five section colours
+% (University \sample[0.7em]{University},
+% Study \sample[0.7em]{Study},
+% Business \sample[0.7em]{Business},
+% Research \sample[0.7em]{Research}, and
+% Departments \sample[0.7em]{Departments})\dots
+%
+\xdefinecolor{University}{RGB}{9,70,133}
+\xdefinecolor{Study}{RGB}{130,154,52}
+\xdefinecolor{Business}{RGB}{85,39,119}
+\xdefinecolor{Research}{RGB}{59,147,166}
+\xdefinecolor{Departments}{RGB}{136,62,40}
+%
+% \dots four faculty colours
+% (Engineering and Design \sample[0.7em]{Engineering},
+% Humanities and Social Sciences \sample[0.7em]{Humanities},
+% Science \sample[0.7em]{Science}, and
+% School of Management \sample[0.7em]{Management})\dots
+%
+\xdefinecolor{Engineering}{RGB}{193,112,34}
+\xdefinecolor{Humanities}{RGB}{161,0,111}
+\xdefinecolor{Science}{RGB}{171,182,37}
+\xdefinecolor{Management}{RGB}{0,156,228}
+%
+% \dots and four highlight colours
+% (Violet \sample[0.7em]{Violet},
+% Lime \sample[0.7em]{Lime},
+% Clerical \sample[0.7em]{Clerical}, and
+% Slush Puppy \sample[0.7em]{SlushPuppy}).
+%
+\xdefinecolor{Violet}{RGB}{152,125,176}
+\xdefinecolor{Lime}{RGB}{211,216,82}
+\xdefinecolor{Clerical}{RGB}{188,92,150}
+\xdefinecolor{SlushPuppy}{RGB}{177,215,237}
+%LITERATE
+%</palette>
+%<*theme>
+%<<LITERATE
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{beamerthemeBath}
+    [\Version\space Beamer theme for University of Bath presentations]
+%LITERATE
+%</theme>
 %<*internal>
 \fi
 \def\nameofplainTeX{plain}
@@ -800,6 +814,8 @@ Copyright (C) 2014 Alex Ball <a.ball@ukoln.ac.uk>
 \usedir{tex/latex/bathslides}
 \generate{
   \file{bathslides.cls}{\from{\jobname.dtx}{class}}
+  \file{bathcolors.sty}{\from{\jobname.dtx}{palette}}
+  \file{beamerthemeBath.sty}{\from{\jobname.dtx}{theme}}
 }
 %</install>
 %<install>\endbatchfile

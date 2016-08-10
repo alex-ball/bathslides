@@ -22,12 +22,12 @@ clean:
 	rm -f $(NAME).{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,listing,log,nav,out,run.xml,snm,synctex.gz,toc,vrb}
 	rm -f $(NAME)-slides.{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,ins,listing,log,nav,out,run.xml,snm,synctex.gz,toc,vrb}
 distclean: clean
-	rm -f $(NAME).{pdf,ins} $(NAME)-slides.pdf $(NAME).cls
+	rm -f $(NAME).{pdf,ins} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamerthemeBath.sty
 inst: all
 	mkdir -p $(UTREE)/{tex,source,doc}/latex/$(NAME)
 	mkdir -p $(UTREE)/tex/generic/logos-ubath
 	cp $(NAME).dtx $(NAME).ins $(UTREE)/source/latex/$(NAME)
-	cp $(NAME).cls $(UTREE)/tex/latex/$(NAME)
+	cp $(NAME).cls bathcolors.sty beamerthemeBath.sty $(UTREE)/tex/latex/$(NAME)
 	cp $(NAME).pdf $(NAME)-slides.pdf README.md $(UTREE)/doc/latex/$(NAME)
 	cp uob-logo-grey-transparent.{eps,pdf} $(UTREE)/tex/generic/logos-ubath
 	mktexlsr
@@ -40,7 +40,7 @@ install: all
 	sudo mkdir -p $(LOCAL)/{tex,source,doc}/latex/$(NAME)
 	sudo mkdir -p $(LOCAL)/tex/generic/logos-ubath
 	sudo cp $(NAME).dtx $(NAME).ins $(LOCAL)/source/latex/$(NAME)
-	sudo cp $(NAME).cls $(LOCAL)/tex/latex/$(NAME)
+	sudo cp $(NAME).cls bathcolors.sty beamerthemeBath.sty $(LOCAL)/tex/latex/$(NAME)
 	sudo cp $(NAME).pdf $(NAME)-slides.pdf README.md $(LOCAL)/doc/latex/$(NAME)
 	sudo cp uob-logo-grey-transparent.{eps,pdf} $(LOCAL)/tex/generic/logos-ubath
 	mktexlsr
@@ -51,5 +51,5 @@ uninstall:
 	mktexlsr
 zip: all
 	mkdir $(TDIR)
-	cp $(NAME).{pdf,dtx} $(NAME)-slides.pdf $(NAME).cls README.md Makefile $(TDIR)
+	cp $(NAME).{pdf,dtx} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamerthemeBath.sty README.md Makefile $(TDIR)
 	cd $(TEMP); zip -Drq $(PWD)/$(NAME)-$(VERS).zip $(NAME)
