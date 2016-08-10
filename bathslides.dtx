@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %<*internal|class>
-\def\Version{2015/10/08 v2.0}
+\def\Version{2016/08/10 v3.0-pre}
 %</internal|class>
 %<*internal>
 \iffalse
@@ -116,31 +116,10 @@ Ball][me].
 %
 % == Options and mode switching ==
 %
-% This class has four use cases, which decompose into two sets of two. The
-% first decision is |\ifArticle|: are we producing an article (‘true’), or a
-% slide deck (‘false’ – default)?
+% Mode switching is delegated to 'beamerswitch', but there are some legacy
+% options to support.
 %
-\newtoggle{Article}
-%
-% If in article mode, we ask |\ifSet|: do we also want to initiate a run
-% to produce the slide deck (‘true’) or not (‘false’ – default)?
-%
-\newtoggle{Set}
-%
-% If in slides mode, we ask |\ifHandout|: do we want them laid out for printing
-% (‘true’) or for screen (‘false’ – default)?
-%
-\newtoggle{Handout}
-%
-% The user answers by means of options, of course.
-%
-\DeclareOption{article}{\toggletrue{Article}}
-\DeclareOption{set}{\toggletrue{Set}}
-\DeclareOption{handout}{\toggletrue{Handout}\PassOptionsToClass{handout}{beamer}}
-%
-% We also support the `trans` mode of standard 'beamer'.
-%
-\DeclareOption{trans}{\PassOptionsToClass{trans}{beamer}}
+\DeclareOption{set}{\PassOptionsToClass{article,alsobeamer}{beamerswitch}}
 %
 % In addition, different parts of the university use different colours. We
 % provide these as options.
@@ -155,77 +134,60 @@ Ball][me].
 \DeclareOption{humsocsci}{\def\bathslides@contrast{Humanities}}
 \DeclareOption{science}{\def\bathslides@contrast{Science}}
 \DeclareOption{management}{\def\bathslides@contrast{Management}}
+%
+% All other options are passed to 'beamerswitch'.
+%
+\DeclareOption*{%
+  \PassOptionsToClass{\CurrentOption}{beamerswitch}%
+}
 \ExecuteOptions{university}
 \ProcessOptions\relax
 
 %
-% So, if in article mode \emph{and} producing slides as well, we compile twice.
-% The first time, the |\jobname| does not end in ‘-slides’ (user take note), so
-% we initiate a job with ‘-slides’ appended to the |\jobname| and pause. In the
-% parallel session, we notice the new |\jobname| suffix and switch to slides
-% mode. Once that is finished, we proceed with the original job in article mode.
-% Note that this requires shell escape to be enabled and 'latexmk' installed.
+% Now we load everything we need.
 %
-\iftoggle{Set}{%
-  \RequirePackage{xstring,shellesc,iftex}%
-  \IfEndWith*{\jobname}{-slides}{%
-    \togglefalse{Article}
-  }{%
-    \ifbool{PDFTeX}{%
-      \ShellEscape{latexmk -silent -pdf -synctex=1 -interaction=batchmode -jobname=\jobname-slides \jobname}
-    }{%
-      \ifbool{LuaTeX}{%
-        \ShellEscape{latexmk -silent -lualatex -synctex=1 -interaction=batchmode -jobname=\jobname-slides \jobname}
-      }{%
-        \ifbool{XeTeX}{%
-          \ShellEscape{latexmk -silent -xelatex -synctex=1 -interaction=batchmode -jobname=\jobname-slides \jobname}
-        }{%
-          \ShellEscape{latexmk -silent -synctex=1 -interaction=batchmode -jobname=\jobname-slides \jobname}
-        }%
-      }%
-    }%
-    \toggletrue{Article}
-  }%
-}{}
+% It looks odd to have the |\inst| markers from 'beamer' in the maths font, so
+% we used the |textinst| option for 'beamerswitch'.
 %
-% Article mode uses the 'article' class. We use 12pt text to keep it readable on
-% the podium. Left and right margins of 3cm and top and bottom margins of 2.5cm
-% give a typeblock with an approximate golden aspect ratio.
+\PassOptionsToClass{textinst}{beamerswitch}
 %
-\iftoggle{Article}{%
-  \LoadClass[a4paper,12pt]{article}
-  \RequirePackage[hmargin=3cm,vmargin=2.5cm]{geometry}
+% In article mode, we use 12pt text to keep it readable on the podium.
 %
-% The 'beamerarticle' package provides compatibility with 'beamer' code. It
-% loads 'xcolor', so any additional options we want have to be declared
-% beforehand.
+\PassOptionsToClass{a4paper,12pt}{article}
 %
-  \PassOptionsToPackage{table}{xcolor}
-  \RequirePackage[noamssymb]{beamerarticle}
+% I anticipate using fonts with the necessary symbols for 'beamer', but which
+% may clash with 'amssymb'.
 %
-% I find slide titles somewhat intrusive in article mode (unless repurposed as
-% float captions, say), so we turn off the default handling from 'beamerarticle'.
+\PassOptionsToClass{noamssymb}{beamer}
+\PassOptionsToPackage{noamssymb}{beamerarticle}
 %
-  \renewcommand{\frametitle}[1]{}
-  \renewcommand{\framesubtitle}[1]{}
+% We provide the possibility of using colourful tables.
 %
-% Slide mode uses 'beamer', of course.
-%
-}{%
-  \LoadClass[ignorenonframetext,xcolor=table,noamssymb]{beamer}[2007/03/11]
-  \usefonttheme{professionalfonts}
-%
-% We will use 'tikz' for the top bar and progress indicator, and 'tcolorbox'
-% to style the presentation title on the title slide.
-%
-  \RequirePackage{tikz,tcolorbox}
+\PassOptionsToPackage{table}{xcolor}
+\LoadClass{beamerswitch}
+
 %
 % In handout mode, we lay out two slides to an A4 page. 
 %
-  \iftoggle{Handout}{%
-    \RequirePackage{pgfpages}
-    \pgfpagesuselayout{2 on 1}[a4paper,border shrink=5mm]
-  }{}%
+\handoutlayout{paper=a4paper,nup=2,pnos}
+%
+% I find slide titles somewhat intrusive in article mode (unless repurposed as
+% float captions, say), so we turn them off. I also make use of the more
+% 'beamer'-esque |\maketitle| routine provided by 'beamerswitch'.
+%
+\articlelayout{maketitle,frametitles=none}
+%
+% Left and right margins of 3cm and top and bottom margins of 2.5cm
+% give a typeblock with an approximate golden aspect ratio.
+%
+\mode<article>{
+  \RequirePackage[hmargin=3cm,vmargin=2.5cm]{geometry}
+}
+%
+% I anticipate using fonts with professional features.
+%
+\mode<presentation>{
+  \usefonttheme{professionalfonts}
 }
 
 %
@@ -397,87 +359,44 @@ Ball][me].
 \def\@author{Please specify the author}
 \edef\@date{\the\year-\ifnum\month<10 0\fi\the\month-\ifnum\day<10 0\fi\the\day}
 %
-% The 'beamer' class takes care of adding presentation metadata to the PDF
-% properties, but 'beamerarticle' doesn't. We achieve parity with some
-% additional |\hypersetup|. Note that 'beamerarticle' appends the subtitle
-% to |\@title| with a linebreak; we adjust this so that a colon is used instead.
-%
-\mode<article>{
-  \renewcommand{\subtitle}[2][]{\def\insertsubtitle{#2}\g@addto@macro\@title{: #2}}
-  \AtBeginDocument{
-    \begingroup
-      \hypersetup{pdftitle={\@title}}%
-    \def\and{\unskip, }%
-    \let\thanks=\@gobble
-    \let\inst=\@gobble
-    \hypersetup{pdfauthor={\@author}}%
-    \endgroup
-  }
-%
-% We adjust |\maketitle| to shave off a little vertical space from the top,
-% add in a line for the |\institute|, include details of the occasion and
-% print the date pleasingly.
+% We add these new elements to the |\maketitle| routine in article mode.
 %
   \ifundef{\beamer@originstitute}{%
     \renewcommand{\institute}[2][]{\def\insertinstitute{#2}}%
   }{%
     \renewcommand{\institute}[2][]{\def\insertinstitute{#2}\beamer@originstitute{#2}}%
   }%
-  \def\@maketitle{%
-    \newpage
-    \null
-    \begin{center}%
-    \let\footnote\thanks
-      {\LARGE \@title \par}%
-      \vskip 1.5em%
-      {%
-        \large\lineskip .5em%
-        \begin{tabular}[t]{c}%
-          \ifundef{\insertauthorurl}{\@author}{\href{\insertauthorurl}{\@author}}%
-        \end{tabular}\par
-      }%
-      \ifdefvoid{\insertinstitute}{}{%
-        {%
-          \small\lineskip .5em%
-          \begin{tabular}[t]{c}%
-            \insertinstitute
-          \end{tabular}%
-        }%
-      }%
-      \par\vskip 1em%
-      {%
-        \large
-        \ifdefvoid{\insertoccasion}{}{\insertoccasion, }%
-        \printdate{\@date}%
-      }%
-    \end{center}%
-    \par\vskip 1.5em%
-  }
+\mode<article>{
+  \patchcmd{\@maketitle}{%
+    \@author
+  }{%
+    \ifundef{\insertauthorurl}{\@author}{\href{\insertauthorurl}{\@author}}%
+  }{}{}
+  \patchcmd{\@maketitle}{%
+    \large \@date
+  }{%
+    \large
+    \ifdefvoid{\insertoccasion}{}{\insertoccasion, }%
+    \printdate{\@date}%
+  }{}{}
 }
-%
-% It looks odd to have the |\inst| markers from 'beamer' in the maths font, so
-% we replace those definitions with something more in keeping.
-%
-\def\beamer@insttitle#1{\textsuperscript{#1}}
-\def\beamer@instinst#1{\textsuperscript{#1}\ignorespaces}
 
 %
 % == Late package dependencies ==
 %
 % Some packages need to be loaded late to prevent problems.
 %
-\RequirePackage{hyperref}
-\hypersetup
-{breaklinks
-,bookmarksopen
-,pdfview=FitH
-,pdfstartview=FitH
-,pdfborder={0 0 0}
-}
 \RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
 
 %
 % == Slide templates ==
+%
+% We will use 'tikz' for the top bar and progress indicator, and 'tcolorbox'
+% to style the presentation title on the title slide.
+%
+\mode<presentation>{
+  \RequirePackage{tikz,tcolorbox}
+}
 %
 % We allow a little more horizontal space by squeezing the margins
 %
