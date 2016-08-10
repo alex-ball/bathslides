@@ -6,7 +6,6 @@ TDIR  = $(TEMP)/$(NAME)
 VERS  = $(shell ltxfileinfo -v $(NAME).dtx)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
-WORKMF = "/home/ab318/Data/TeX/workmf"
 all:	uob-logo-grey-transparent.eps uob-logo-grey-transparent.pdf $(NAME).pdf $(NAME)-slides.pdf clean
 	@exit 0
 $(NAME).cls: $(NAME).dtx
@@ -49,19 +48,6 @@ uninstall:
 	sudo rm -r $(LOCAL)/{tex,source,doc}/latex/$(NAME)
 	sudo rm $(LOCAL)/tex/generic/logos-ubath/uob-logo-grey-transparent.{eps,pdf}
 	sudo rmdir --ignore-fail-on-non-empty $(LOCAL)/tex/generic/logos-ubath
-	mktexlsr
-workmf: all
-	mkdir -p $(WORKMF)/{tex,source,doc}/latex/$(NAME)
-	mkdir -p $(WORKMF)/tex/generic/logos-ubath
-	cp $(NAME).dtx $(NAME).ins $(WORKMF)/source/latex/$(NAME)
-	cp $(NAME).cls $(WORKMF)/tex/latex/$(NAME)
-	cp $(NAME).pdf $(NAME)-slides.pdf README.md $(WORKMF)/doc/latex/$(NAME)
-	cp uob-logo-grey-transparent.{eps,pdf} $(WORKMF)/tex/generic/logos-ubath
-	mktexlsr
-unworkmf:
-	rm -r $(WORKMF)/{tex,source,doc}/latex/$(NAME)
-	rm $(WORKMF)/tex/generic/logos-ubath/uob-logo-grey-transparent.{eps,pdf}
-	rmdir --ignore-fail-on-non-empty $(WORKMF)/tex/generic/logos-ubath
 	mktexlsr
 zip: all
 	mkdir $(TDIR)
