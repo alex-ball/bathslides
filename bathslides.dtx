@@ -320,18 +320,34 @@ Ball][me].
 % Here are the basic colours:
 %
 \setbeamercolor{normal text}{bg=white,fg=black}
-\setbeamercolor{structure}{bg=,fg=primary}
-\setbeamercolor{alerted text}{bg=,fg=contrast}
-\setbeamercolor{frametitle}{bg=,fg=primary}
-\setbeamercolor{footline}{bg=,fg=contrast}
-\setbeamercolor{sidebar}{bg=contrast,fg=white}
-\setbeamercolor{title}{bg=,fg=primary}
-\setbeamercolor{subtitle}{bg=,fg=black}
-\setbeamercolor{author}{bg=,fg=black}
-\setbeamercolor{institute}{bg=,fg=black}
-\setbeamercolor{date}{bg=,fg=black}
-\setbeamercolor{progress}{bg=contrast!50,fg=white}
+\setbeamercolor{alerted text}{fg=contrast}
+\setbeamercolor{example text}{fg=Violet}
+\setbeamercolor{structure}{fg=primary}
 %
+% Here are the palette colours:
+%
+\setbeamercolor{palette primary}{fg=contrast}
+\setbeamercolor{palette tertiary}{fg=primary}
+\setbeamercolor{palette secondary}{use={palette primary,palette tertiary},fg=palette primary.fg!50!palette tertiary.fg}
+\setbeamercolor{palette quaternary}{fg=black}
+\setbeamercolor{palette sidebar primary}{use=palette primary,bg=palette primary.fg,fg=white}
+\setbeamercolor{palette sidebar secondary}{use=palette primary,bg=palette primary.fg!75!white,fg=white}
+\setbeamercolor{palette sidebar tertiary}{use=palette primary,bg=palette primary.fg!50!white,fg=white}
+\setbeamercolor{palette sidebar quaternary}{use=palette primary,bg=palette primary.fg!25!white,fg=white}
+%
+% Here are the colours for the inner theme elements:
+%
+\setbeamercolor{subtitle}{parent=normal text}
+\setbeamercolor{author}{parent=normal text}
+\setbeamercolor{institute}{parent=normal text}
+\setbeamercolor{date}{parent=normal text}
+%
+% Here are the colours for the outer theme elements:
+%
+\setbeamercolor{headline}{parent=palette sidebar primary}
+\setbeamercolor{section in head/foot}{parent=headline}
+\setbeamercolor{sidebar}{parent=palette sidebar primary}
+\setbeamercolor{footline}{use=palette primary,fg=palette primary.fg}
 
 %
 % == Metadata handling ==
@@ -501,7 +517,7 @@ Ball][me].
 \defbeamertemplate*{sidebar right}{progress}{%
   \vfill
   \parbox{7mm}{\centering
-    \usebeamercolor{progress}%
+    \usebeamercolor{palette sidebar tertiary}%
     \begin{tikzpicture}
       \pgfmathparse{equal(\inserttotalframenumber,1)}%
       \ifnum1=\pgfmathresult
