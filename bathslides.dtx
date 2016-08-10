@@ -144,6 +144,8 @@ Ball][me].
 \ProcessOptions\relax
 
 %
+% == Loading the base class ==
+%
 % Now we load everything we need.
 %
 % It looks odd to have the |\inst| markers from 'beamer' in the maths font, so
@@ -167,6 +169,9 @@ Ball][me].
 \LoadClass{beamerswitch}
 
 %
+% == Layout, orthography and typography ==
+%
+%
 % In handout mode, we lay out two slides to an A4 page. 
 %
 \handoutlayout{paper=a4paper,nup=2,pnos}
@@ -189,9 +194,6 @@ Ball][me].
 \mode<presentation>{
   \usefonttheme{professionalfonts}
 }
-
-%
-% == Typography ==
 %
 % I use British orthography. If there is a demand for it, I might convert the
 % following lines to respect class options instead of a hard-coded language, but
@@ -208,12 +210,54 @@ Ball][me].
   \RequirePackage{microtype}%
 }
 %
+% In article mode, to give the speaker an impression of what appears on the
+% slides and what doesn't, we switch to sans serif for slide contents.
+%
+\addtobeamertemplate{frame begin}{}{\sffamily}
+\addtobeamertemplate{frame end}{\rmfamily}{}
+%
+% When reading from a podium, some extra whitespace helps me keep track of where
+% I am. So we switch to using Web-style paragraphs.
+%
+\mode<article>{%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{1em plus 0.2em minus 0.2em}%
+%
+% But this makes lists a bit too open, so we tighten them up again by reducing
+% the `\topsep' to zero. We do this by injecting the appropriate code into the
+% second argument of `\list' where this appears in the definition of the three
+% main list environments.
+%
+  \patchcmd{\itemize}{\def}{\topsep\z@\def}{}{}
+  \patchcmd{\enumerate}{\usecounter\@enumctr}{\usecounter\@enumctr\topsep\z@}{}{}
+  \patchcmd{\description}{\labelwidth\z@}{\labelwidth\z@\topsep\z@}{}{}
+%
+% We make captions easier to spot. We try to make the placement of the final
+% period more intelligent using `\@addpunct' from 'amsthm'.
+%
+  \RequirePackage[format=hang,justification=raggedright,labelfont=bf]{caption}
+  \RequirePackage{amsthm}
+  \DeclareCaptionTextFormat{condperiod}{#1\@addpunct{.}}
+  \captionsetup{textformat=condperiod}
+%
+% We also make footnotes look a little neater.
+%
+  \RequirePackage[hang,multiple,bottom]{footmisc}
+  \setlength{\footnotemargin}{1em}
+}
+
+%
+% == Presentation font theme ==
+%
 % Some sensible font sizes and weights for use on slides.
 %
 \setbeamerfont{frametitle}{size=\LARGE}
 \setbeamerfont{framesubtitle}{size=\large}
 \setbeamerfont{footline}{size=\scriptsize}
 \setbeamerfont{alerted text}{series=\bfseries}
+
+%
+% == University colour palette ==
 %
 % The University colour palette has four primary colours
 % (White \sample[0.7em]{white},
@@ -259,6 +303,7 @@ Ball][me].
 \xdefinecolor{Lime}{RGB}{211,216,82}
 \xdefinecolor{Clerical}{RGB}{188,92,150}
 \xdefinecolor{SlushPuppy}{RGB}{177,215,237}
+
 %
 % The colour palette for the presentation:
 % \begin{itemize}
@@ -268,8 +313,11 @@ Ball][me].
 %
 \colorlet{primary}{Slate}
 \colorlet{contrast}{\bathslides@contrast}
+
 %
-% We apply these to make a 'beamer' colour scheme.
+% == Presentation colour theme ==
+%
+% Here are the basic colours:
 %
 \setbeamercolor{normal text}{bg=white,fg=black}
 \setbeamercolor{structure}{bg=,fg=primary}
@@ -284,41 +332,6 @@ Ball][me].
 \setbeamercolor{date}{bg=,fg=black}
 \setbeamercolor{progress}{bg=contrast!50,fg=white}
 %
-% In article mode, to give the speaker an impression of what appears on the
-% slides and what doesn't, we switch to sans serif for slide contents.
-%
-\addtobeamertemplate{frame begin}{}{\sffamily}
-\addtobeamertemplate{frame end}{\rmfamily}{}
-%
-% When reading from a podium, some extra whitespace helps me keep track of where
-% I am. So we switch to using Web-style paragraphs.
-%
-\mode<article>{%
-  \setlength{\parindent}{0pt}%
-  \setlength{\parskip}{1em plus 0.2em minus 0.2em}%
-%
-% But this makes lists a bit too open, so we tighten them up again by reducing
-% the `\topsep' to zero. We do this by injecting the appropriate code into the
-% second argument of `\list' where this appears in the definition of the three
-% main list environments.
-%
-  \patchcmd{\itemize}{\def}{\topsep\z@\def}{}{}
-  \patchcmd{\enumerate}{\usecounter\@enumctr}{\usecounter\@enumctr\topsep\z@}{}{}
-  \patchcmd{\description}{\labelwidth\z@}{\labelwidth\z@\topsep\z@}{}{}
-%
-% We make captions easier to spot. We try to make the placement of the final
-% period more intelligent using `\@addpunct' from 'amsthm'.
-%
-  \RequirePackage[format=hang,justification=raggedright,labelfont=bf]{caption}
-  \RequirePackage{amsthm}
-  \DeclareCaptionTextFormat{condperiod}{#1\@addpunct{.}}
-  \captionsetup{textformat=condperiod}
-%
-% We also make footnotes look a little neater.
-%
-  \RequirePackage[hang,multiple,bottom]{footmisc}
-  \setlength{\footnotemargin}{1em}
-}
 
 %
 % == Metadata handling ==
@@ -389,7 +402,7 @@ Ball][me].
 \RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
 
 %
-% == Slide templates ==
+% == Presentation outer theme ==
 %
 % We will use 'tikz' for the top bar and progress indicator, and 'tcolorbox'
 % to style the presentation title on the title slide.
@@ -539,6 +552,8 @@ Ball][me].
   (\insertcontinuationcount)%
 }
 
+%
+% == Presentation inner theme ==
 %
 % The 'beamer' title page template lays out the elements of the title page.
 % Our custom version uses hooks not dissimilar to those provided by 'memoir',
