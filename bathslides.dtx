@@ -105,6 +105,17 @@ Ball][me].
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
 \ProvidesClass{bathslides}
     [\Version\space Class for University of Bath presentations]
+%LITERATE
+%</class>
+%<*theme>
+%<<LITERATE
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{beamerthemeBath}
+    [\Version\space Beamer theme for University of Bath presentations]
+%LITERATE
+%</theme>
+%<*class|theme>
+%<<LITERATE
 %
 % == Internal conveniences ==
 %
@@ -115,14 +126,22 @@ Ball][me].
 
 %
 % == Options and mode switching ==
+%LITERATE
+%</class|theme>
+%<*class>
+%<<LITERATE
 %
 % Mode switching is delegated to 'beamerswitch', but there are some legacy
 % options to support.
 %
 \DeclareOption{set}{\PassOptionsToClass{article,alsobeamer}{beamerswitch}}
+%LITERATE
+%</class>
+%<*class|theme>
+%<<LITERATE
 %
-% In addition, different parts of the university use different colours. We
-% provide these as options.
+% Different parts of the university use different colours. We provide these as
+% options.
 %
 \DeclareOption{darkgrey}{\def\bathslides@contrast{Grey}}
 \DeclareOption{university}{\def\bathslides@contrast{University}}
@@ -134,14 +153,26 @@ Ball][me].
 \DeclareOption{humsocsci}{\def\bathslides@contrast{Humanities}}
 \DeclareOption{science}{\def\bathslides@contrast{Science}}
 \DeclareOption{management}{\def\bathslides@contrast{Management}}
+%LITERATE
+%</class|theme>
+%<*class>
+%<<LITERATE
 %
 % All other options are passed to 'beamerswitch'.
 %
 \DeclareOption*{%
   \PassOptionsToClass{\CurrentOption}{beamerswitch}%
 }
+%LITERATE
+%</class>
+%<*class|theme>
+%<<LITERATE
 \ExecuteOptions{university}
 \ProcessOptions\relax
+%LITERATE
+%</class|theme>
+%<*class>
+%<<LITERATE
 
 %
 % == Loading the base class ==
@@ -246,6 +277,10 @@ Ball][me].
   \setlength{\footnotemargin}{1em}
 }
 
+%LITERATE
+%</class>
+%<*theme>
+%<<LITERATE
 %
 % == Presentation font theme ==
 %
@@ -259,6 +294,13 @@ Ball][me].
 \setbeamerfont{alerted text}{series=\bfseries}
 
 %
+% == Presentation colour theme ==
+%
+%LITERATE
+%</theme>
+%<*class|theme>
+%<<LITERATE
+%
 % The colour palette for the presentation:
 % \begin{itemize}
 % \item ‘primary’ is used for structural elements;
@@ -269,9 +311,10 @@ Ball][me].
 \colorlet{primary}{Slate}
 \colorlet{contrast}{\bathslides@contrast}
 
-%
-% == Presentation colour theme ==
-%
+%LITERATE
+%</class|theme>
+%<*theme>
+%<<LITERATE
 % Here are the basic colours:
 %
 \setbeamercolor{normal text}{bg=white,fg=black}
@@ -304,6 +347,10 @@ Ball][me].
 \setbeamercolor{sidebar}{parent=palette sidebar primary}
 \setbeamercolor{footline}{use=palette primary,fg=palette primary.fg}
 
+%LITERATE
+%</theme>
+%<*class>
+%<<LITERATE
 %
 % == Metadata handling ==
 %
@@ -372,6 +419,10 @@ Ball][me].
 %
 \RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
 
+%LITERATE
+%</class>
+%<*theme>
+%<<LITERATE
 %
 % == Presentation outer theme ==
 %
@@ -606,6 +657,10 @@ Ball][me].
   \end{beamercolorbox}
 }
 
+%LITERATE
+%</theme>
+%<*class>
+%<<LITERATE
 %
 % We provide a |\finale| command for use on the last slide, to parallel
 % |\maketitle|. It behaves differently depending on the mode; the article
@@ -701,6 +756,10 @@ Ball][me].
     \normalsize
   }%
 }
+%
+% For styling the presentation, we use the accompanying 'beamer' theme.
+%
+\usetheme{Bath}
 %LITERATE
 %</class>
 %<*palette>
@@ -757,13 +816,6 @@ Ball][me].
 \xdefinecolor{SlushPuppy}{RGB}{177,215,237}
 %LITERATE
 %</palette>
-%<*theme>
-%<<LITERATE
-\NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesPackage{beamerthemeBath}
-    [\Version\space Beamer theme for University of Bath presentations]
-%LITERATE
-%</theme>
 %<*internal>
 \fi
 \def\nameofplainTeX{plain}
