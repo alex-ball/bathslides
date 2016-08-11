@@ -167,13 +167,16 @@ Ball][me].
 %</class>
 %<*class|theme>
 %<<LITERATE
-\ExecuteOptions{university}
+%
+% We set the default colour scheme (unless the scheme has already been chosen).
+%
+\ifundef{\bathslides@contrast}{\ExecuteOptions{university}}{}
 \ProcessOptions\relax
+
 %LITERATE
 %</class|theme>
 %<*class>
 %<<LITERATE
-
 %
 % == Loading the base class ==
 %
@@ -295,7 +298,6 @@ Ball][me].
 
 %
 % == Presentation colour theme ==
-%
 %LITERATE
 %</theme>
 %<*class|theme>
@@ -310,11 +312,11 @@ Ball][me].
 \RequirePackage{bathcolors}
 \colorlet{primary}{Slate}
 \colorlet{contrast}{\bathslides@contrast}
-
 %LITERATE
 %</class|theme>
 %<*theme>
 %<<LITERATE
+%
 % Here are the basic colours:
 %
 \setbeamercolor{normal text}{bg=white,fg=black}
@@ -590,7 +592,7 @@ Ball][me].
 %
 \def\hookpretitle{}
 \def\hooktitleauthor{\par\vskip1.5\bigskipamount}
-\def\hookauthorinstitute{}
+\def\hookauthorinstitute{\par\smallskip}
 \def\hookinstituteoccasion{\par\vskip2\bigskipamount}
 \def\hookoccasiondate{\par\smallskip}
 \def\hookdategraphic{\par\smallskip}
@@ -600,9 +602,12 @@ Ball][me].
 % bibliographic metadata in the middle, then any licence information at the
 % bottom.
 %
+\providetoggle{isodate}
+\@ifpackageloaded{isodate}{\toggletrue{isodate}}{\togglefalse{isodate}}
+\RequirePackage{array}
 \setbeamertemplate{title page}{%
   \global\toggletrue{titlepage}%
-  \vbox to 20.6mm{}%
+  \vbox to 16.8mm{}%
   \begin{centering}
     \hookpretitle
     \begin{beamercolorbox}[sep=0pt]{title}
@@ -639,7 +644,7 @@ Ball][me].
       \usebeamerfont{date}%
       \ifdefvoid{\insertoccasion}{}{\insertoccasion}%
       \hookoccasiondate
-      \printdate{\insertdate}
+      \iftoggle{isodate}{\printdate{\insertdate}}{\insertdate}
     \end{beamercolorbox}
     \hookdategraphic
     {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
@@ -1344,6 +1349,16 @@ In article mode, \cmd{finale} inserts a postscript consisting of a horizontal li
 \renewcommand*{\mdSectionLevelOne}{\expandafter\string\csname subsubsection\endcsname}
 \CopyFDconditionFromTo{PScomment}{comment}
 \MakeInputJobDoc[cls]{0}{\SectionLevelOneParseInput}
+
+\subsection{bathcolors.sty}
+
+\renewcommand*{\mdJobName}{bathcolors}
+\MakeInputJobDoc[sty]{0}{\SectionLevelOneParseInput}
+
+\subsection{beamerthemeBath.sty}
+
+\renewcommand*{\mdJobName}{beamerthemeBath}
+\MakeInputJobDoc[sty]{0}{\SectionLevelOneParseInput}
 
 \end{document}
 %</driver>

@@ -21,6 +21,7 @@ uob-logo-grey-transparent.pdf: uob-logo-grey-transparent.eps
 clean:
 	rm -f $(NAME).{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,listing,log,nav,out,run.xml,snm,synctex.gz,toc,vrb}
 	rm -f $(NAME)-slides.{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,ins,listing,log,nav,out,run.xml,snm,synctex.gz,toc,vrb}
+	rm -f bathcolors.doc beamerthemeBath.doc
 distclean: clean
 	rm -f $(NAME).{pdf,ins} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamerthemeBath.sty
 inst: all
