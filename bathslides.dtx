@@ -667,65 +667,21 @@ Ball][me].
 %<*class>
 %<<LITERATE
 %
-% We provide a |\finale| command for use on the last slide, to parallel
-% |\maketitle|. It behaves differently depending on the mode; the article
-% version uses 'tabularx'.
+% == Finishing off ==
 %
-\RequirePackage{tabularx}
-\newcommand{\finale}[1][\empty]{%
+% We provide a |\finale| command for finishing off a document or presentation,
+% to parallel |\maketitle|. It behaves differently depending on the mode.
 %
-% Finale slides act like title slides.
+% In article mode, we will present relevant information laid out in tabular
+% fashion with 'tabularx'. (We could do it with minipages but this is
+% fractionally easier.)
 %
-  \mode<presentation>{%
-    \global\toggletrue{titlepage}%
+\mode<article>{%
+  \RequirePackage{tabularx}
 %
-% We add a strut to account for the blue bar at the top, then use stretchy
-% skips to place the remaining content in the middle of the slide.
+% We begin with a horizontal rule.
 %
-    \vbox to 20mm{}%
-    \vfill
-%
-% We start with a thank you.
-%
-    \begin{beamercolorbox}[sep=8pt,center]{title}
-      \usebeamerfont{title}Thank you for your attention\par%
-    \end{beamercolorbox}%
-    \par\bigskip
-%
-% If the author URL has been provided, we display that.
-%
-    \ifdefvoid{\insertauthorurl}{}{%
-      \begin{beamercolorbox}[sep=8pt,center]{author}
-        \usebeamerfont{author}\insertauthor: \url{\insertauthorurl}\par%
-      \end{beamercolorbox}%
-    }%
-%
-% If a group URL has been provided, we display that.
-%
-    \ifdefvoid{\uobGroupUrl}{}{%
-      \begin{beamercolorbox}[sep=8pt,center]{author}
-        \usebeamerfont{author}%
-        \ifdefvoid{\uobGroupName}{}{\uobGroupName: }%
-        \url{\uobGroupUrl}\par%
-      \end{beamercolorbox}%
-    }%
-%
-% Lastly, we display whatever is in the optional argument, if one has been
-% provided.
-%
-    \ifx\empty#1
-    \else
-      \begin{beamercolorbox}[sep=8pt,center]{author}
-        \usebeamerfont{author}#1\par%
-      \end{beamercolorbox}%
-    \fi
-    \vfill
-    \vbox{}
-  }%
-%
-% In article mode, we begin with a horizontal rule.
-%
-  \mode<article>{%
+  \newcommand{\finale}[1][\empty]{%
     \vbox{}
     \small
     \rule[1em]{\textwidth}{0.8pt}\par\nopagebreak
@@ -760,7 +716,79 @@ Ball][me].
     \ifx\empty#1\else\par\vskip2pt #1\par\fi
     \normalsize
   }%
+}%
+
+%LITERATE
+%</class>
+%<*theme>
+%<<LITERATE
+%
+% In presentation mode, |\finale| is intended to be used in a frame. It prints
+% a thank you and some key information that the audience can note down during
+% the questions.
+%
+% We suppress any sectional information, then we add a strut to account for the
+% header bar at the top.
+%
+\setbeamertemplate{final page}{%
+  \global\toggletrue{titlepage}%
+  \vbox to 16.8mm{}%
+%
+% We start with a thank you.
+%
+  \vfill
+  \begin{beamercolorbox}[sep=8pt,center]{title}
+    \usebeamerfont{title}Thank you for your attention\par
+  \end{beamercolorbox}%
+  \par\bigskip
+%
+% If the author URL has been provided, we display that.
+%
+  \ifdefvoid{\insertauthorurl}{}{%
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}%
+      \insertauthor: \url{\insertauthorurl}\par
+    \end{beamercolorbox}%
+  }%
+%
+% If a group URL has been provided, we display that.
+%
+  \ifdefvoid{\uobGroupUrl}{}{%
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}%
+      \ifdefvoid{\uobGroupName}{}{\uobGroupName: }%
+      \url{\uobGroupUrl}\par
+    \end{beamercolorbox}%
+  }%
+%
+% Lastly, we display whatever is in the optional argument, if one has been
+% provided.
+%
+  \ifstrempty{\bathslides@finale}{}{%
+    \begin{beamercolorbox}[sep=8pt,center]{author}
+      \usebeamerfont{author}\bathslides@finale\par
+    \end{beamercolorbox}%
+  }
+  \vfill
+  \vbox{}
+}%
+%
+% We provide the user command for triggering this template.
+%
+\mode<presentation>{%
+  \newcommand{\bathslides@finale}{}
+  \newcommand{\finale}[1][]{%
+    \renewcommand{\bathslides@finale}{#1}%
+    \usebeamertemplate{final page}%
+    \renewcommand{\bathslides@finale}{}%
+  }%
 }
+%LITERATE
+%</theme>
+%<*class>
+%<<LITERATE
+%
+% == Beamer theme ==
 %
 % For styling the presentation, we use the accompanying 'beamer' theme.
 %
