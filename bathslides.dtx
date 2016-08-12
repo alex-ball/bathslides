@@ -205,7 +205,6 @@ Ball][me].
 %
 % == Layout, orthography and typography ==
 %
-%
 % In handout mode, we lay out two slides to an A4 page. 
 %
 \handoutlayout{paper=a4paper,nup=2,pnos}
@@ -372,9 +371,8 @@ Ball][me].
 % this presentation on social media. The content is available if provided via
 % |\inserthashtag|
 %
-\let\inserthashtag\empty
 \newcommand*{\hashtag}[1]{%
-  \renewcommand*{\inserthashtag}{\href{https://twitter.com/hashtag/#1}{\##1}}%
+  \newcommand*{\inserthashtag}{\href{https://twitter.com/hashtag/#1}{\##1}}%
 }
 %
 % The |\authorurl| command is used to give a URL where more information about
@@ -417,9 +415,11 @@ Ball][me].
 %
 % == Late package dependencies ==
 %
-% Some packages need to be loaded late to prevent problems.
+% The 'cleveref' package is not essential, but it is nice to have.
 %
-\RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
+\IfFileExists{cleveref.sty}{%
+  \RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
+}
 
 %LITERATE
 %</class>
@@ -598,9 +598,8 @@ Ball][me].
 \def\hookdategraphic{\par\smallskip}
 \def\hookpostgraphic{}
 %
-% We add a strut to account for the blue bar at the top, then put the main
-% bibliographic metadata in the middle, then any licence information at the
-% bottom.
+% We suppress any sectional information, not that there should be any at this
+% point, then we add a strut to account for the header bar at the top.
 %
 \providetoggle{isodate}
 \@ifpackageloaded{isodate}{\toggletrue{isodate}}{\togglefalse{isodate}}
@@ -608,6 +607,9 @@ Ball][me].
 \setbeamertemplate{title page}{%
   \global\toggletrue{titlepage}%
   \vbox to 16.8mm{}%
+%
+% Then we have the main bibliographic metadata in the middle.
+%
   \begin{centering}
     \hookpretitle
     \begin{beamercolorbox}[sep=0pt]{title}
@@ -650,6 +652,9 @@ Ball][me].
     {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
     \hookpostgraphic
   \end{centering}
+%
+% Then we place licence information, if any has been provided, at the bottom.
+%
   \vfill
   \begin{beamercolorbox}[leftskip=5mm]{institute}
     \usebeamerfont{institute}
@@ -1378,14 +1383,14 @@ In article mode, \cmd{finale} inserts a postscript consisting of a horizontal li
 \CopyFDconditionFromTo{PScomment}{comment}
 \MakeInputJobDoc[cls]{0}{\SectionLevelOneParseInput}
 
-\subsection{bathcolors.sty}
-
-\renewcommand*{\mdJobName}{bathcolors}
-\MakeInputJobDoc[sty]{0}{\SectionLevelOneParseInput}
-
 \subsection{beamerthemeBath.sty}
 
 \renewcommand*{\mdJobName}{beamerthemeBath}
+\MakeInputJobDoc[sty]{0}{\SectionLevelOneParseInput}
+
+\subsection{bathcolors.sty}
+
+\renewcommand*{\mdJobName}{bathcolors}
 \MakeInputJobDoc[sty]{0}{\SectionLevelOneParseInput}
 
 \end{document}
