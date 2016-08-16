@@ -289,25 +289,6 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
 \newcommand*{\env}[1]{\textcolor{Environment}{\ttfamily #1}}
 \newcommand*{\key}[1]{\textcolor{Option}{\ttfamily #1}}
 \newcommand*{\val}[1]{\textcolor{Value}{\ttfamily #1}}
-
-% ~~~
-\newcommand*{\barg}[1]{$\langle${\normalfont\emph{#1}}$\rangle$}
-\newcommand*{\prm}[1]{\textcolor{blue!75!black}{\texttt{#1}}}
-\usepackage{enumitem}
-\def\ChangeItem{%
-  \let\origitem\item
-  \renewcommand{\item}[1][]{\origitem[{\makebox[\textwidth][l]{\strut\normalfont ##1}}]}
-}
-\newenvironment{describe}[1][]{%
-  \begin{description}%
-    [style=nextline
-    ,before={\ChangeItem}
-    ,#1]
-}{
-  \end{description}
-}
-% ~~~
-
 \newcommand{\sample}[2][1em]{\bgroup\setlength{\fboxsep}{0pt}\fbox{\color{#2}\rule{#1}{#1}}\egroup}
 
 % For typesetting the implementation
@@ -489,9 +470,9 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
 \maketitle
 \end{frame}
 
-\begin{abstract}
+\begin{absquote}
 This is the documentation for and a demonstration of \filename, ‘\fileinfo’, \fileversion, dated \printdateTeX{\filedate}.
-\end{abstract}
+\end{absquote}
 
 \section{Usage}
 
@@ -505,76 +486,96 @@ The class is loaded in the usual way.
 \end{dispListing}
 
 The class defaults to producing slides. You can change this with an option:
-\begin{describe}
-\item[\key{handout}]
+\begin{docKey}{handout}{}{no value, initially unset}
 Lay slides out two to an A4 page, for easy printing.
-\item[\key{trans}]
+\end{docKey}
+\begin{docKey}{trans}{}{no value, initially unset}
 Produce less dynamic slides: useful for archival versions.
 \only<article>{See the \textsf{beamer} manual for a more detailed explanation
   of how this ‘transparencies version’ behaves.}
-\item[\key{article}]
+\end{docKey}
+\begin{docKey}{article}{}{no value, initially unset}
 Produce a document in article mode: useful for transcripts.
-\item[\key{set}]
-Produce a document in article mode, plus a set of slides (suffixed with
-‘\texttt{-slides}’).
-\end{describe}
+\end{docKey}
+\begin{docKey}{set}{}{no value, initially unset}
+Produce a document in article mode, plus a set of slides\only<article>{
+(suffixed with ‘\texttt{-slides}’)}.
+\end{docKey}
 \end{frame}
 
-Note that the \key{set} option makes a shell call to \textsf{latexmk}, so if shell escape is not enabled, or \textsf{latexmk} is not installed, it will act much like the \key{article} option. CAUTION: If you intend to use the \key{set} option, do NOT end your source filename with ‘\texttt{-slides}’.
+Since this class was first released, the mode switching aspects have been
+improved and separated out into a separate class file, \pkg{beamerswitch}.
+The options above are only a subset; please see the \pkg{beamerswitch}
+documentation for full details. Note that the \key{set} option is now simply
+shorthand for \key{article} and \key{alsobeamer}.
 
 \begin{frame}[fragile]{Using the class}
 The colour scheme can also be adjusted:
 \begin{multicols}{2}
-\begin{describe}
-\item[\key{darkgrey}]
-\sample{Grey}
-\item[\key{university}\quad (default)]
-\sample{University}
-\item[\key{study}]
-\sample{Study}
-\item[\key{business}]
-\sample{Business}
-\item[\key{research}]
-\sample{Research}
-\item[\key{depts}]
-\sample{Departments}
-\item[\key{engineering}]
-\sample{Engineering}
-\item[\key{humsocsci}]
-\sample{Humanities}
-\item[\key{science}]
-\sample{Science}
-\item[\key{management}]
-\sample{Management}
-\end{describe}
+\begin{docKey}{darkgrey}{}{}
+Set the colour to \sample{Grey}
+\end{docKey}
+\begin{docKey}{university}{\space\textrm{(default)}}{}
+Set the colour to \sample{University}
+\end{docKey}
+\begin{docKey}{study}{}{}
+Set the colour to \sample{Study}
+\end{docKey}
+\begin{docKey}{business}{}{}
+Set the colour to \sample{Business}
+\end{docKey}
+\begin{docKey}{research}{}{}
+Set the colour to \sample{Research}
+\end{docKey}
+\begin{docKey}{depts}{}{}
+Set the colour to \sample{Departments}
+\end{docKey}
+\begin{docKey}{engineering}{}{}
+Set the colour to \sample{Engineering}
+\end{docKey}
+\begin{docKey}{humsocsci}{}{}
+Set the colour to \sample{Humanities}
+\end{docKey}
+\begin{docKey}{science}{}{}
+Set the colour to \sample{Science}
+\end{docKey}
+\begin{docKey}{management}{}{}
+Set the colour to \sample{Management}
+\end{docKey}
 \end{multicols}
 \end{frame}
 
 Behind the scenes, these options affect a colour named ‘\texttt{contrast}’.
 (Note that you could set that colour manually to something else if you wished.)
 In slide mode, it is used in the top and side bars, and for alerted text.
-It is not used by the class in article mode, but is available if you wish to use it yourself.
+It is not used by the class in article mode, but is available if you wish to use
+it yourself.
 
 \subsection{Preamble metadata}
 
 \begin{frame}{Metadata}
 When filling out the document metadata, you can use the regular \textsf{beamer} conventions with a few differences:
 
-\begin{describe}
-\item[\cs{date}\marg{ISO date}]
+\begin{docCommand}{date}{\marg{ISO date}}
 Enter the date in ISO format, e.g.\ 2011-12-13.
-\item[\cs{occasion}\marg{event name}]
+\end{docCommand}
+\begin{docCommand}{occasion}{\marg{event name}}
 Use this to provide the name of the event where the presentation will be given.
-\item[\cs{authorurl}\marg{URL}]
+\end{docCommand}
+\begin{docCommand}{authorurl}{\marg{URL}}
 Use this to provide a URL where more details about the author may be consulted (not so useful for multi-author presentations).
-\item[\cs{hashtag}\marg{hashtag}]
+\end{docCommand}
+\begin{docCommand}{hashtag}{\marg{hashtag}}
 Use this to specify exactly one hashtag for sharing on social media. Omit the hash (\#), as the class will add it for you.
-\end{describe}
+\end{docCommand}
 \end{frame}
 
 \subsection{Customizing the title slide}
 
-You can add elements to the title slide by using the hooks provided. (The hooks are also recognized in article mode but they mainly affect the \cs{finale} command, of which more later.) You use the hooks by defining them, so to use \cs{uobGroupName}, for example, you would need to do something like this:
+You can add elements to the title slide by using the hooks provided.
+(The hooks are also recognized in article mode but they mainly affect the
+\cs{finale} command, of which more later.) You use the hooks by defining them,
+so to use \cs{uobGroupName}, for example, you would need to do something like this:
 \begin{dispListing}
 \def\uobGroupName{Library Research Services}
 \end{dispListing}
@@ -582,45 +583,54 @@ You can add elements to the title slide by using the hooks provided. (The hooks 
 \begin{frame}{Hooks (Group)}
 You can associate your presentation with a particular faculty, department, service or group
 within the University by defining the following hooks.
-
-\begin{describe}
-  \item[\cs{uobGroupName}]
-  The name of the group within the University, e.g. ‘Library Research Services’.
-  \item[\cs{uobGroupUrl}]
-  The full URL of the group's home page.
-\end{describe}
+\begin{docCommand}{uobGroupName}{}
+The name of the group within the University, e.g. ‘Library Research Services’.
+\end{docCommand}
+\begin{docCommand}{uobGroupUrl}{}
+The full URL of the group's home page.
+\end{docCommand}
 \end{frame}
 
 \begin{frame}{Hooks (Licence)}
 If releasing the presentation under licence, you can declare this by defining
 the following hooks.
 
-\begin{describe}
-\item[\cs{licenseLogo}]
+\begin{docCommand}{licenseLogo}{}
 This should insert the logo of the licence under which the presentation is released, if applicable. For best results, scale it to fit the width of the bounding box, e.g.\ \cs{insertgraphics}%
 \key{[width=\cs{hsize}]}\marg{filename}.
-\item[\cs{licenseStatement}]
+\end{docCommand}
+\begin{docCommand}{licenseStatement}{}
 A notice concerning the licence, e.g.\ ‘Released under an X licence.’
-\item[\cs{licenseUrl}]
+\end{docCommand}
+\begin{docCommand}{licenseUrl}{}
 The URL of the full licence text, if applicable.
-\end{describe}
+\end{docCommand}
 \end{frame}
 
 \subsection{Composing your presentation}
 
-The class is set up to ignore non-frame text in presentation mode, and ignore frame titles in article mode. The idea is that you put additional commentary outside frames, and it shows up in the transcript but not the slides. With pictorial slides, you can wrap them in \texttt{figure} environments, and with textual slides you can run them into the text of the commentary.
+The class is set up to ignore non-frame text in presentation mode, and ignore
+frame titles in article mode. The idea is that you put additional commentary
+outside frames, and it shows up in the transcript but not the slides. With
+pictorial slides, you can wrap them in \texttt{figure} environments, and with
+textual slides you can run them into the text of the commentary.
 
-In article mode, article-only text is shown in a serif font, while text that also appears on a slide is shown in a sans serif font, so you can tell them apart.
+In article mode, article-only text is shown in a serif font,
+while text that also appears on a slide is shown in a sans serif font,
+so you can tell them apart.
 
 \begin{frame}[fragile]{Frame background}
-The class provides a new option for frames.
+The class provides some new options for frames.
 
-\begin{describe}
-\item[{\key{background=\barg{filename}}}] (default: no background)
+\begin{docKey}{background}{\meta{filename}}{default blank, initially blank}
 Use this option on its own (or omit it) to use the usual blank background, header bar and sidebar.
 Use it with an image filename to use that image as the background instead.
 This option has no effect in article mode.
-\end{describe}
+\end{docKey}
+\begin{docKey}{nosection}{}{no value, initially unset}
+Suppress the display of the current section in the header bar.
+This option has no effect in article mode.
+\end{docKey}
 \end{frame}
 
 Note that the background image should suit a 4:3 aspect ratio as it will be stretched to fit. As a reminder, \textsf{beamer} slides are 128\,mm $\times$ 96\,mm.
@@ -631,16 +641,15 @@ Note that the background image should suit a 4:3 aspect ratio as it will be stre
 \begin{frame}[fragile]{Finishing off}
 You can insert a closing slide in your presentation to parallel your opening slide.
 
-\begin{describe}
-\item[\cs{finale}\oarg{important note}]
+\begin{docCommand}{finale}{\oarg{important note}}
 The optional argument lets you add an important note, such as a key link or date, to the end of the slide.
 Wrap the command in a bare frame, as you would for \cs{maketitle}:
 \begin{tcolorbox}
-\cs{begin}\prm{\{frame\}}\\
+\cs{begin}\marg{frame}\\
 \cs{finale}\\
-\cs{end}\prm{\{frame\}}
+\cs{end}\marg{frame}
 \end{tcolorbox}
-\end{describe}
+\end{docCommand}
 \end{frame}
 
 In article mode, \cs{finale} inserts a postscript consisting of a horizontal line followed by the licence (if provided) and group or University information.
