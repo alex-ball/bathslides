@@ -9,19 +9,20 @@ UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 all:	uob-logo-grey-transparent.eps uob-logo-grey-transparent.pdf $(NAME).pdf $(NAME)-slides.pdf clean
 	@exit 0
 $(NAME).cls: $(NAME).dtx
-	lualatex -synctex=1 -interaction=batchmode $(NAME).dtx >/dev/null
+	lualatex -synctex=1 -shell-escape -interaction=batchmode $(NAME).dtx >/dev/null
 $(NAME).pdf: $(NAME).cls
-	latexmk -silent -lualatex -synctex=1 -interaction=batchmode $(NAME).dtx >/dev/null
+	latexmk -silent -lualatex -synctex=1 -shell-escape -interaction=batchmode $(NAME).dtx >/dev/null
 $(NAME)-slides.pdf: $(NAME).cls
-	latexmk -silent -lualatex -synctex=1 -interaction=batchmode -jobname=$(NAME)-slides $(NAME).dtx >/dev/null
+	latexmk -silent -lualatex -synctex=1 -shell-escape -interaction=batchmode -jobname=$(NAME)-slides $(NAME).dtx >/dev/null
 uob-logo-grey-transparent.eps:
 	wget http://www.bath.ac.uk/marketing/images/logos/eps/uob-logo-grey-transparent.eps
 uob-logo-grey-transparent.pdf: uob-logo-grey-transparent.eps
 	epstopdf uob-logo-grey-transparent.eps
 clean:
-	rm -f $(NAME).{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,listing,log,nav,out,run.xml,snm,synctex.gz,toc,vrb}
-	rm -f $(NAME)-slides.{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,ins,listing,log,nav,out,run.xml,snm,synctex.gz,toc,vrb}
+	rm -f $(NAME).{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,listing,log,nav,out,run.xml,snm,synctex.gz,tcbtemp,toc,vrb}
+	rm -f $(NAME)-slides.{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,ins,listing,log,nav,out,run.xml,snm,synctex.gz,tcbtemp,toc,vrb}
 	rm -f bathcolors.doc beamerthemeBath.doc
+	rm -rf _minted-*
 distclean: clean
 	rm -f $(NAME).{pdf,ins} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamerthemeBath.sty
 inst: all
