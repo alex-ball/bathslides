@@ -6,7 +6,7 @@
 % \iffalse
 %</internal>
 %<*internal|class|palette|theme>
-\def\Version{2016/08/10 v3.0-pre}
+\def\Version{2016/08/16 v3.0}
 %</internal|class|palette|theme>
 %<*internal>
 \iffalse
@@ -17,22 +17,24 @@ The bathslides class: University of Bath presentations
 
 The bathslides LaTeX class is intended to produce slides for University
 of Bath presentations, or an accompanying transcript, or both.
-It is based on the beamer class.
+It is based on the [beamerswitch] class.
+
+Internally, bathslides uses a presentation theme called 'Bath',
+which can be used independently within beamer.
 
 Installation
 ------------
 
 ### Pre-requisites ###
 
-You should be able to extract the class file using only the base
-tools of a TeX installation, but in order for the documentation to be
-typeset correctly, you will need to have the image files
+To use this theme, you will need to have the image files
 `uob-logo-grey-transparent.pdf` (for PDF) and
 `uob-logo-grey-transparent.eps` (for DVI) somewhere TeX can find them.
 I recommend you place them in the same folder as `bathslides.dtx`
 while compiling the class and in a `tex/generic/logos-ubath` folder
 thereafter.
 
+The files are not distributed with the theme for licensing reasons.
 You can download `uob-logo-grey-transparent.eps` from the
 [University of Bath website][logo]. To get the PDF version, run
 `epstopdf uob-logo-grey-transparent.eps`. The `epstopdf` utility is
@@ -40,7 +42,8 @@ available in most TeX distributions.
 
 The documentation uses fonts from the XCharter and sourcesanspro
 packages, as well as sourcecodepro if XeLaTeX or LuaLaTeX is used,
-or zi4 (inconsolata) otherwise.
+or zi4 (inconsolata) otherwise. To compile the documentation
+successfully, you will need the minted package installed and working.
 
 ### Automated way ###
 
@@ -52,6 +55,8 @@ A makefile is provided which you can use with the Make utility:
       - bathslides.pdf
       - bathslides-slides.pdf
       - bathslides.cls
+      - beamerthemeBath
+      - bathcolors.sty
 
     It also downloads `uob-logo-grey-transparent.eps` using `wget` and
     generates `uob-logo-grey-transparent.pdf` using `epstopdf`.
@@ -67,20 +72,27 @@ instead.
 
 ### Manual way ###
 
- 1. Compile bathslides.dtx just as you would a normal LaTeX file. As well
+To install the class from scratch, follow these instructions. If you have
+downloaded the zip file from the [Releases] page on GitHub, you can skip the
+first two steps.
+
+ 1. Compile bathslides.dtx just as you would a normal LaTeX file. You will
+    need to enable shell escape for minted to work properly. As well
     as the usual PDF (or DVI) and auxiliary files, several others are
     generated.
 
  2. Compile bathslides.dtx a second time with `-jobname=bathslides-slides`
-    as a command line option to generate the sample slides.
+    as a command line option to generate the sample slides. Again, you will
+    need to enable shell escape for minted to work properly.
 
  3. Move the files to your TeX tree as follows:
 
       - `source/latex/bathslides`: bathslides.dtx, bathslides.ins
-      - `tex/latex/bathslides`: bathslides.cls, and (optionally) the
-        separately available image files as noted above
+      - `tex/latex/bathslides`: bathcolors.sty, bathslides.cls,
+        beamerthemeBath.sty, and (optionally) the separately
+        available image files as noted above
       - `doc/latex/bathslides`: bathslides.pdf, bathslides-slides.pdf,
-         README.md
+        README.md
 
  4. You may then have to update your installation's file name database
     before TeX and friends can see the files.
@@ -101,6 +113,8 @@ version.
 This work is "maintained" (as per LPPL maintenance status) by [Alex
 Ball][me].
 
+[beamerswitch]: https://github.com/alex-ball/beamerswitch
+[Releases]: https://github.com/alex-ball/bathslides/releases
 [logo]: http://www.bath.ac.uk/marketing/guides-assets/visual-identity/logo/#id4
 [lppl]: http://www.latex-project.org/lppl.txt
 [me]: http://alexball.me.uk/
@@ -474,7 +488,7 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
 This is the documentation for and a demonstration of \filename, ‘\fileinfo’, \fileversion, dated \printdateTeX{\filedate}.
 \end{absquote}
 
-\section{Usage}
+\section{Loading}
 
 \subsection{Loading the class}
 
@@ -509,8 +523,22 @@ The options above are only a subset; please see the \pkg{beamerswitch}
 documentation for full details. Note that the \key{set} option is now simply
 shorthand for \key{article} and \key{alsobeamer}.
 
-\begin{frame}[fragile]{Using the class}
-The colour scheme can also be adjusted:
+\subsection{Loading the theme}
+
+\begin{frame}[fragile]{Using the beamer theme}
+If you don't want the article mode settings introduced by the full class,
+you can simply load the theme directly into \pkg{beamer}:
+
+\begin{dispListing}
+\documentclass{beamer}
+\usetheme{Bath}
+\end{dispListing}
+\end{frame}
+
+\subsection{Colour scheme}
+
+\begin{frame}[fragile]{Changing the colour scheme}
+Both the class and theme recognise these colour options:
 \begin{multicols}{2}
 \begin{docKey}{darkgrey}{}{}
 Set the colour to \sample{Grey}
@@ -551,6 +579,8 @@ In slide mode, it is used in the top and side bars, and for alerted text.
 It is not used by the class in article mode, but is available if you wish to use
 it yourself.
 
+\section{Titling}
+
 \subsection{Preamble metadata}
 
 \begin{frame}{Metadata}
@@ -580,6 +610,8 @@ so to use \cs{uobGroupName}, for example, you would need to do something like th
 \def\uobGroupName{Library Research Services}
 \end{dispListing}
 
+\subsubsection{Group affiliation}
+
 \begin{frame}{Hooks (Group)}
 You can associate your presentation with a particular faculty, department, service or group
 within the University by defining the following hooks.
@@ -591,13 +623,17 @@ The full URL of the group's home page.
 \end{docCommand}
 \end{frame}
 
-\begin{frame}{Hooks (Licence)}
+\subsubsection{Licence}
+
+\begin{frame}[fragile]{Hooks (Licence)}
 If releasing the presentation under licence, you can declare this by defining
 the following hooks.
 
 \begin{docCommand}{licenseLogo}{}
-This should insert the logo of the licence under which the presentation is released, if applicable. For best results, scale it to fit the width of the bounding box, e.g.\ \cs{insertgraphics}%
-\key{[width=\cs{hsize}]}\marg{filename}.
+This should insert the logo of the licence under which the presentation is released, if applicable. For best results, scale it to fit the width of the bounding box like so:
+\begin{dispListing}
+\def\licenseLogo{\insertgraphics[width=\hsize]{filename}}
+\end{dispListing}
 \end{docCommand}
 \begin{docCommand}{licenseStatement}{}
 A notice concerning the licence, e.g.\ ‘Released under an X licence.’
@@ -607,47 +643,102 @@ The URL of the full licence text, if applicable.
 \end{docCommand}
 \end{frame}
 
-\subsection{Composing your presentation}
+\subsubsection{General tweaking}
+
+\begin{frame}{Hooks (General)}
+To make any other adjustments, you can \alert{redefine} the following hooks:
+\begin{multicols}{2}
+  \begin{docCommand}{hookpretitle}{}
+    Inserted before the title.
+  \end{docCommand}
+  \begin{docCommand}{hooktitleauthor}{}
+    Inserted after the title.
+  \end{docCommand}
+  \begin{docCommand}{hookauthorinstitute}{}
+    Inserted after the author.
+  \end{docCommand}
+  \begin{docCommand}{hookinstituteoccasion}{}
+    Inserted after the institute.
+  \end{docCommand}
+\columnbreak
+  \begin{docCommand}{hookoccasiondate}{}
+    Inserted after the occasion.
+  \end{docCommand}
+  \begin{docCommand}{hookdategraphic}{}
+    Inserted after the date.
+  \end{docCommand}
+  \begin{docCommand}{hookpostgraphic}{}
+    Inserted after the graphic.
+  \end{docCommand}
+\end{multicols}
+\end{frame}
+
+You can see the initial definitions in the \hyperref[sec:inner]{Implementation} section below.
+
+\section{Composing your presentation}
 
 The class is set up to ignore non-frame text in presentation mode, and ignore
 frame titles in article mode. The idea is that you put additional commentary
 outside frames, and it shows up in the transcript but not the slides. With
-pictorial slides, you can wrap them in \texttt{figure} environments, and with
+pictorial slides, you can wrap them in \env{figure} environments, and with
 textual slides you can run them into the text of the commentary.
 
 In article mode, article-only text is shown in a serif font,
 while text that also appears on a slide is shown in a sans serif font,
 so you can tell them apart.
 
-\begin{frame}[fragile]{Frame background}
+\begin{frame}[fragile]{Frame options}
 The class provides some new options for frames.
 
+\begin{docKey}{nosection}{}{no value, initially unset}
+Suppress the display of the current section in the header bar.
+This option has no effect in article mode.
+To suppress the display of the section on all frames, do this:
+\begin{dispListing}
+\setbeamertemplate{section in head/foot}{}
+\end{dispListing}
+\end{docKey}
 \begin{docKey}{background}{\meta{filename}}{default blank, initially blank}
 Use this option on its own (or omit it) to use the usual blank background, header bar and sidebar.
 Use it with an image filename to use that image as the background instead.
-This option has no effect in article mode.
-\end{docKey}
-\begin{docKey}{nosection}{}{no value, initially unset}
-Suppress the display of the current section in the header bar.
 This option has no effect in article mode.
 \end{docKey}
 \end{frame}
 
 Note that the background image should suit a 4:3 aspect ratio as it will be stretched to fit. As a reminder, \textsf{beamer} slides are 128\,mm $\times$ 96\,mm.
 
+\begin{frame}[fragile]{Progress meter}
+Slides show progress information at the bottom right in the form of a dial or
+pie chart. To show progress as a fraction using frame numbers
+\only<presentation>{(e.g. \insertframenumber\slash\inserttotalframenumber):}
+\only<article>{(e.g. 10\slash 17):}
+\begin{dispListing}
+\setbeamertemplate{progress}[fraction]
+\end{dispListing}
 
-\subsection{Finishing off}
+To show just the current frame number:
+\begin{dispListing}
+\setbeamertemplate{progress}[number]
+\end{dispListing}
 
-\begin{frame}[fragile]{Finishing off}
+To show nothing at all:
+\begin{dispListing}
+\setbeamertemplate{sidebar right}[default]
+\end{dispListing}
+\end{frame}
+
+\section{Finishing off}
+
+\begin{frame}[fragile]{Closing slide}
 You can insert a closing slide in your presentation to parallel your opening slide.
 
 \begin{docCommand}{finale}{\oarg{important note}}
 The optional argument lets you add an important note, such as a key link or date, to the end of the slide.
 Wrap the command in a bare frame, as you would for \cs{maketitle}:
 \begin{tcolorbox}
-\cs{begin}\marg{frame}\\
+\cs{begin}\brackets{frame}\\
 \cs{finale}\\
-\cs{end}\marg{frame}
+\cs{end}\brackets{frame}
 \end{tcolorbox}
 \end{docCommand}
 \end{frame}
@@ -668,8 +759,12 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 }
 
 \newpage
-\section{Implementation}
+\section{Implementation}\label{sec:implementation}
 
+Note that some code is duplicated across several files. Therefore the line
+numbers here are totally fictitious when it comes to the actual files.
+
+\setcounter{FancyVerbLine}{0}%
 \DocInput{\jobname.dtx}
 \end{document}
 %</driver>
@@ -694,18 +789,30 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 %<*class>
 % \fi
 %
-% Mode switching is delegated to \pkg{beamerswitch}, but there are some legacy
-% options to support.
+% \begin{optionkey}{set}
+% Mode switching is delegated to \pkg{beamerswitch}, but we need to support the
+% legacy \key{set} option.
 %
 %    \begin{macrocode}
 \DeclareOption{set}{\PassOptionsToClass{article,alsobeamer}{beamerswitch}}
 %    \end{macrocode}
+% \end{optionkey}
 %
 % \iffalse
 %</class>
 %<*class|theme>
 % \fi
 %
+% \begin{optionkey}{darkgrey}
+% \begin{optionkey}{university}
+% \begin{optionkey}{study}
+% \begin{optionkey}{business}
+% \begin{optionkey}{research}
+% \begin{optionkey}{depts}
+% \begin{optionkey}{engineering}
+% \begin{optionkey}{humsocsci}
+% \begin{optionkey}{science}
+% \begin{optionkey}{management}
 % Different parts of the university use different colours. We provide these as
 % options.
 %
@@ -721,6 +828,16 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 \DeclareOption{science}{\def\bathslides@contrast{Science}}
 \DeclareOption{management}{\def\bathslides@contrast{Management}}
 %    \end{macrocode}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
+% \end{optionkey}
 %
 % \iffalse
 %</class|theme>
@@ -753,7 +870,7 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 %<*class>
 % \fi
 %
-% \subsection{Loading the base class}
+% \subsection{Class: Setting options in loaded classes and packages}
 %
 % Now we load everything we need.
 %
@@ -786,7 +903,7 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 
 %    \end{macrocode}
 %
-% \subsection{Layout, orthography and typography}
+% \subsection{Class: Layout, orthography and typography}
 %
 % In handout mode, we lay out two slides to an A4 page. 
 %
@@ -888,6 +1005,14 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
   \RequirePackage[hang,multiple,bottom]{footmisc}
   \setlength{\footnotemargin}{1em}
 }
+%    \end{macrocode}
+%
+% The \pkg{cleveref} package is not essential, but it is nice to have.
+%
+%    \begin{macrocode}
+\IfFileExists{cleveref.sty}{%
+  \RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
+}
 
 %    \end{macrocode}
 %
@@ -896,7 +1021,7 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 %<*theme>
 % \fi
 %
-% \subsection{Presentation font theme}
+% \subsection{Theme: Presentation font theme}
 %
 % Some sensible font sizes and weights for use on slides.
 %
@@ -905,12 +1030,13 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 \setbeamerfont{framesubtitle}{size=\large}
 \setbeamerfont{section in head/foot}{size=\normalsize}
 \setbeamerfont{headline}{size=\normalsize}
+\setbeamerfont{sidebar}{size=\tiny}
 \setbeamerfont{footline}{size=\scriptsize}
 \setbeamerfont{alerted text}{series=\bfseries}
 
 %    \end{macrocode}
 %
-% \subsection{Presentation colour theme}
+% \subsection{Theme: Presentation colour theme}
 % \iffalse
 %</theme>
 %<*class|theme>
@@ -979,8 +1105,10 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 %<*class>
 % \fi
 %
-% \subsection{Metadata handling}
+% \subsection{Class: Metadata handling}
 %
+% \begin{macro}{occasion}
+% \begin{macro}{insertoccasion}
 % We define some new elements of metadata.
 % The \cs{occasion} command is used to record the event at which the presentation
 % is given. The content is available if provided via \cs{insertoccasion}.
@@ -994,7 +1122,11 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
   }%
 }
 %    \end{macrocode}
+% \end{macro}
+% \end{macro}
 %
+% \begin{macro}{hashtag}
+% \begin{macro}{inserthashtag}
 % The \cs{hashtag} command is used to suggest a hashtag people can use to share
 % this presentation on social media. The content is available if provided via
 % \cs{inserthashtag}
@@ -1004,7 +1136,11 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
   \newcommand*{\inserthashtag}{\href{https://twitter.com/hashtag/#1}{\##1}}%
 }
 %    \end{macrocode}
+% \end{macro}
+% \end{macro}
 %
+% \begin{macro}{authorurl}
+% \begin{macro}{insertauthorurl}
 % The \cs{authorurl} command is used to give a URL where more information about
 % the speaker is available. The content is available if provided via
 % \cs{insertauthorurl}
@@ -1014,6 +1150,8 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
   \def\insertauthorurl{#1}%
 }
 %    \end{macrocode}
+% \end{macro}
+% \end{macro}
 %
 % In case the author forgets to include some key metadata, we provide some
 % safety values to allow the document to compile.
@@ -1049,23 +1187,12 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 
 %    \end{macrocode}
 %
-% \subsection{Late package dependencies}
-%
-% The \pkg{cleveref} package is not essential, but it is nice to have.
-%
-%    \begin{macrocode}
-\IfFileExists{cleveref.sty}{%
-  \RequirePackage[noabbrev,capitalize,nameinlink]{cleveref}
-}
-
-%    \end{macrocode}
-%
 % \iffalse
 %</class>
 %<*theme>
 % \fi
 %
-% \subsection{Presentation outer theme}
+% \subsection{Theme: Presentation outer theme}
 %
 % We will use \pkg{tikz} for the top bar and progress indicator, and \pkg{tcolorbox}
 % to style the presentation title on the title slide.
@@ -1082,15 +1209,15 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 \setbeamersize{text margin left=4mm,text margin right=4mm}
 %    \end{macrocode}
 %
-% We introduce a switch, \cs{iftitlepage}, that can be used to provide a
+% We introduce a toggle, |titlepage|, that can be used to provide a
 % different layout depending on whether this is a normal or a title slide.
 %
 %    \begin{macrocode}
 \newtoggle{titlepage}
 %    \end{macrocode}
 %
-% We provide another switch, \cs{ifbgpicture}, which is used to decide whether
-% to use the regular background (‘false’ – default) or a user-supplied image
+% We provide another toggle, |bgpicture|, which is used to decide whether
+% to use a blank background (‘false’ – default) or a user-supplied image
 % (‘true’).
 %
 %    \begin{macrocode}
@@ -1107,7 +1234,8 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 % We allow users to replace the normal template with a background image.
 % Note that the image is distorted to fit the slide dimensions, so whatever one
 % is chosen needs to have an approximate aspect ratio of 4:3.
-% 
+%
+% \begin{macro}{bgpicture}
 % The method used is to save the filename of the image to \cs{bgpicture}, and let
 % the user change it with a frame option, `background'.
 %
@@ -1128,6 +1256,7 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
   }{}%
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % We also provide a slide option for suppressing the display of the section.
 %
@@ -1143,8 +1272,10 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 % section titles (unless this is a title slide).
 %
 %    \begin{macrocode}
-\defbeamertemplate*{headline}{Bath theme}
-{
+\defbeamertemplate*{section in head/foot}{Bath theme}{%
+  \iftoggle{titlepage}{}{\hypersetup{linkcolor=fg}\insertsectionhead}%
+}
+\defbeamertemplate*{headline}{Bath theme}{%
   \begin{tikzpicture}[remember picture, overlay]
     \coordinate[xshift=-9mm, yshift=-4mm] (logo-ne) at (current page.north east);
     \node[inner sep=0pt,anchor=north east] (logo) at (logo-ne)
@@ -1158,7 +1289,7 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
       -- cycle;
     \coordinate[yshift=-9.5mm] (topbar-text-w) at (current page.north west);
     \node[text=fg,font=\rmfamily\scshape,anchor=west,text width=7cm,inner xsep=4mm,align=left] at (topbar-text-w)
-      {\iftoggle{titlepage}{}{\hypersetup{linkcolor=fg}\insertsectionhead}};
+      {\usebeamertemplate{section in head/foot}};
     \node[text=fg,font=\scriptsize,anchor=east,inner xsep=4mm,align=left] at (logo.west)
       {\ifdefvoid{\inserthashtag}{}{\inserthashtag}};
   \end{tikzpicture}
@@ -1211,21 +1342,24 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 % As an alternative, progress can be shown as a fraction of frame number over
 % total number of frames.
 %
+% \begin{macro}{ProgressNumber}
 %    \begin{macrocode}
+\newlength{\ProgressNumber}
 \defbeamertemplate{progress}{fraction}{%
-  \raggedright
-  \insertframenumber\slash\inserttotalframenumber
-  \hspace*{0.333em}%
+  \centering
+  \settowidth{\ProgressNumber}{\inserttotalframenumber\slash\inserttotalframenumber}%
+  \makebox[\ProgressNumber][r]{\insertframenumber\slash\inserttotalframenumber}%
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % Another possibility is just displaying the frame number.
 %
 %    \begin{macrocode}
 \defbeamertemplate{progress}{number}{%
-  \raggedright
-  \insertframenumber
-  \hspace*{0.333em}%
+  \centering
+  \settowidth{\ProgressNumber}{\inserttotalframenumber}%
+  \makebox[\ProgressNumber][r]{\insertframenumber}%
 }
 %    \end{macrocode}
 %
@@ -1235,9 +1369,7 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 \setbeamersize{sidebar width right=7mm}
 \defbeamertemplate*{sidebar right}{progress}{%
   \vfill
-  \parbox{7mm}{%
-    \usebeamertemplate{progress}%
-  \par}\par
+  \parbox{7mm}{\usebeamertemplate{progress}}\par
   \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
   \vskip 4pt
 }
@@ -1281,8 +1413,15 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 
 %    \end{macrocode}
 %
-% \subsection{Presentation inner theme}
+% \subsection{Theme: Presentation inner theme}\label{sec:inner}
 %
+% \begin{macro}{hookpretitle}
+% \begin{macro}{hooktitleauthor}
+% \begin{macro}{hookauthorinstitute}
+% \begin{macro}{hookinstituteoccasion}
+% \begin{macro}{hookoccasiondate}
+% \begin{macro}{hookdategraphi}
+% \begin{macro}{hookpostgraphic}
 % The \pkg{beamer} title page template lays out the elements of the title page.
 % Our custom version uses hooks not dissimilar to those provided by \pkg{memoir},
 % in case any special effects are needed.
@@ -1296,6 +1435,13 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 \def\hookdategraphic{\par\smallskip}
 \def\hookpostgraphic{}
 %    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
 %
 % We suppress any sectional information, not that there should be any at this
 % point, then we add a strut to account for the header bar at the top.
@@ -1383,6 +1529,9 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 % We provide a \cs{finale} command for finishing off a document or presentation,
 % to parallel \cs{maketitle}. It behaves differently depending on the mode.
 %
+% \subsubsection{In the class, in article mode}
+%
+% \begin{macro}{finale}
 % In article mode, we will present relevant information laid out in tabular
 % fashion with \pkg{tabularx}. (We could do it with minipages but this is
 % fractionally easier.)
@@ -1441,11 +1590,14 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 }%
 
 %    \end{macrocode}
+% \end{macro}
 %
 % \iffalse
 %</class>
 %<*theme>
 % \fi
+%
+% \subsubsection{In the presentation inner theme}
 %
 % In presentation mode, \cs{finale} is intended to be used in a frame. It prints
 % a thank you and some key information that the audience can note down during
@@ -1507,6 +1659,8 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 }%
 %    \end{macrocode}
 %
+% \begin{macro}{finale}
+% \begin{macro}{bathslides@finale}
 % We provide the user command for triggering this template.
 %
 %    \begin{macrocode}
@@ -1519,13 +1673,15 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
   }%
 }
 %    \end{macrocode}
+% \end{macro}
+% \end{macro}
 %
 % \iffalse
 %</theme>
 %<*class>
 % \fi
 %
-% \subsection{Beamer theme}
+% \subsection{Class: Loading the beamer theme}
 %
 % For styling the presentation, we use the accompanying \pkg{beamer} theme.
 %
@@ -1539,6 +1695,8 @@ In article mode, \cs{finale} inserts a postscript consisting of a horizontal lin
 % \fi
 %
 % \subsection{University colour palette}
+%
+% These settings are separated out into \textbf{bathcolors.sty}.
 %
 % The University colour palette has four primary colours
 % (White \sample[0.7em]{white},
