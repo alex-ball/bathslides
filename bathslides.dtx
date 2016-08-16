@@ -522,31 +522,57 @@ Ball][me].
   {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{\MakeLowercase{#1}}}}%
   {}{}
 %
-% We use a right sidebar containing a clock-style progress counter.
+% We provide a variety of progress indicators.
+%
+% The default is a sort of dial or pie chart.
 % The mathematics here makes sure the indicator would start at 0° on the
 % first slide and end up at 360° on the last, with linear variation
 % between. The case of a single slide is handled differently to prevent
 % division by zero.
 %
+\defbeamertemplate*{progress}{dial}{%
+  \centering
+  \usebeamercolor{palette sidebar tertiary}%
+  \begin{tikzpicture}
+    \pgfmathparse{equal(\inserttotalframenumber,1)}%
+    \ifnum1=\pgfmathresult
+      \def\PerCentComplete{360}%
+    \else
+      \pgfmathqparse{360pt * ((\insertframenumber pt - 1pt) / (\inserttotalframenumber pt - 1pt))}%
+      \let\PerCentComplete\pgfmathresult
+    \fi
+    \draw[fg,fill=bg] (0,0mm)
+      -- (90:2.1mm)
+      arc[start angle=90, delta angle=-\PerCentComplete, radius=2.1mm]
+      -- cycle;
+    \draw[fg] (0,0) circle[radius=2.1mm];
+  \end{tikzpicture}%
+}
+%
+% As an alternative, progress can be shown as a fraction of frame number over
+% total number of frames.
+%
+\defbeamertemplate{progress}{fraction}{%
+  \raggedright
+  \insertframenumber\slash\inserttotalframenumber
+  \hspace*{0.333em}%
+}
+%
+% Another possibility is just displaying the frame number.
+%
+\defbeamertemplate{progress}{number}{%
+  \raggedright
+  \insertframenumber
+  \hspace*{0.333em}%
+}
+%
+% We use a right sidebar containing a clock-style progress counter.
+%
 \setbeamersize{sidebar width right=7mm}
 \defbeamertemplate*{sidebar right}{progress}{%
   \vfill
-  \parbox{7mm}{\centering
-    \usebeamercolor{palette sidebar tertiary}%
-    \begin{tikzpicture}
-      \pgfmathparse{equal(\inserttotalframenumber,1)}%
-      \ifnum1=\pgfmathresult
-        \def\PerCentComplete{360}%
-      \else
-        \pgfmathqparse{360pt * ((\insertframenumber pt - 1pt) / (\inserttotalframenumber pt - 1pt))}%
-        \let\PerCentComplete\pgfmathresult
-      \fi
-      \draw[fg,fill=bg] (0,0mm)
-        -- (90:2.1mm)
-        arc[start angle=90, delta angle=-\PerCentComplete, radius=2.1mm]
-        -- cycle;
-      \draw[fg] (0,0) circle[radius=2.1mm];
-    \end{tikzpicture}%
+  \parbox{7mm}{%
+    \usebeamertemplate{progress}%
   \par}\par
   \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
   \vskip 4pt
