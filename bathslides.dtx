@@ -209,7 +209,7 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
 %</internal>
 %<*driver>
 \ProvidesFile{bathslides.dtx}
-    [\Version\ Class for University of Bath presentations]
+    [\Version\space Class for University of Bath presentations]
 \documentclass[article]{bathslides}
 \let\BathslidesMaketitle=\maketitle
 
@@ -501,12 +501,13 @@ The class is loaded in the usual way.
 \end{dispListing}
 
 The class defaults to producing slides. You can change this with an option:
+
 \begin{docKey}{handout}{}{no value, initially unset}
 Lay slides out two to an A4 page, for easy printing.
 \end{docKey}
 \begin{docKey}{trans}{}{no value, initially unset}
 Produce less dynamic slides: useful for archival versions.
-\only<article>{See the \textsf{beamer} manual for a more detailed explanation
+\only<article>{See the \pkg{beamer} manual for a more detailed explanation
   of how this ‘transparencies version’ behaves.}
 \end{docKey}
 \begin{docKey}{article}{}{no value, initially unset}
@@ -540,6 +541,7 @@ you can simply load the theme directly into \pkg{beamer}:
 
 \begin{frame}[fragile]{Changing the colour scheme}
 Both the class and theme recognise these colour options:
+
 \begin{multicols}{2}
 \begin{docKey}{darkgrey}{}{}
 Set the colour to \sample{Grey}
@@ -586,7 +588,7 @@ it yourself.
 
 The class file provides some additional commands for describing your presentation.
 \begin{frame}{Metadata}
-When filling out the document metadata, you can use the regular \textsf{beamer} conventions with a few differences:
+When filling out the document metadata, you can use the regular \pkg{beamer} conventions with a few differences:
 
 \begin{docCommand}{date}{\marg{ISO date}}
 \only<article>{This is not a new command (!) but it is handled slightly differently.}
@@ -623,6 +625,7 @@ so to use \cs{uobGroupName}, for example, you would need to do something like th
 \begin{frame}{Hooks (Group)}
 You can associate your presentation with a particular faculty, department, service or group
 within the University by defining the following hooks.
+
 \begin{docCommand}{uobGroupName}{}
 The name of the group within the University, e.g. ‘Library Research Services’.
 \end{docCommand}
@@ -655,6 +658,7 @@ The URL of the full licence text, if applicable.
 
 \begin{frame}{Hooks (General)}
 To make any other adjustments, you can \alert{redefine} the following hooks:
+
 \begin{multicols}{2}
   \begin{docCommand}{hookpretitle}{}
     Inserted before the title.
@@ -745,6 +749,7 @@ You can insert a closing slide in your presentation to parallel your opening sli
 \begin{docCommand}{finale}{\oarg{important note}}
 The optional argument lets you add an important note, such as a key link or date, to the end of the slide.
 Wrap the command in a bare frame, as you would for \cs{maketitle}:
+
 \begin{tcolorbox}
 \cs{begin}\brackets{frame}\\
 \cs{finale}\\
@@ -1175,11 +1180,11 @@ numbers here are totally fictitious when it comes to the actual files.
 % We add these new elements to the \cs{maketitle} routine in article mode.
 %
 %    \begin{macrocode}
-  \ifundef{\beamer@originstitute}{%
-    \renewcommand{\institute}[2][]{\def\insertinstitute{#2}}%
-  }{%
-    \renewcommand{\institute}[2][]{\def\insertinstitute{#2}\beamer@originstitute{#2}}%
-  }%
+\ifundef{\beamer@originstitute}{%
+  \renewcommand{\institute}[2][]{\def\insertinstitute{#2}}%
+}{%
+  \renewcommand{\institute}[2][]{\def\insertinstitute{#2}\beamer@originstitute{#2}}%
+}%
 \mode<article>{
   \patchcmd{\@maketitle}{%
     \@author
@@ -1261,8 +1266,6 @@ numbers here are totally fictitious when it comes to the actual files.
 \setbeamertemplate{background}{%
   \iftoggle{bgpicture}{%
     \includegraphics[width=\paperwidth,height=\paperheight]{\bgpicture}%
-    \setbeamersize{sidebar width right=0mm}%
-    \setbeamertemplate{sidebar right}[default]%
   }{}%
 }
 %    \end{macrocode}
