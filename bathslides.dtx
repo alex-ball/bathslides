@@ -252,7 +252,7 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
 
 % For typesetting the documentation generally
 \usepackage{tcolorbox}
-\tcbuselibrary{documentation,breakable,minted}
+\tcbuselibrary{documentation,breakable,minted,skins}
 \mode<article>{
   \usepackage{doc}
 }
@@ -286,6 +286,7 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
     , before skip=1em plus 0.2em minus 0.2em
     , after skip=1em plus 0.2em minus 0.2em
     , fontlower=\footnotesize
+    , skin=enhanced
     }
   }
 \renewcommand{\theFancyVerbLine}{\footnotesize\itshape\color{gray}\arabic{FancyVerbLine}}
@@ -583,10 +584,12 @@ it yourself.
 
 \subsection{Preamble metadata}
 
+The class file provides some additional commands for describing your presentation.
 \begin{frame}{Metadata}
 When filling out the document metadata, you can use the regular \textsf{beamer} conventions with a few differences:
 
 \begin{docCommand}{date}{\marg{ISO date}}
+\only<article>{This is not a new command (!) but it is handled slightly differently.}
 Enter the date in ISO format, e.g.\ 2011-12-13.
 \end{docCommand}
 \begin{docCommand}{occasion}{\marg{event name}}
@@ -599,6 +602,11 @@ Use this to provide a URL where more details about the author may be consulted (
 Use this to specify exactly one hashtag for sharing on social media. Omit the hash (\#), as the class will add it for you.
 \end{docCommand}
 \end{frame}
+
+The above changes are not present in the standalone \pkg{beamer} theme.
+You can however sneak the information into your presentation by defining
+\cs{insertoccasion}, \cs{insertauthorurl} and \cs{inserthashtag} respectively.
+To trigger the change in date handling, load the \pkg{isodate} package.
 
 \subsection{Customizing the title slide}
 
@@ -699,13 +707,15 @@ To suppress the display of the section on all frames, do this:
 \end{dispListing}
 \end{docKey}
 \begin{docKey}{background}{=\meta{filename}}{default blank, initially blank}
-Use this option on its own (or omit it) to use the usual blank background, header bar and sidebar.
+Use this option on its own (or omit it) to use the usual blank background.
 Use it with an image filename to use that image as the background instead.
 This option has no effect in article mode.
 \end{docKey}
 \end{frame}
 
-Note that the background image should suit a 4:3 aspect ratio as it will be stretched to fit. As a reminder, \textsf{beamer} slides are 128\,mm $\times$ 96\,mm.
+Note that the background image will be resized to fill the slide completely,
+so to avoid distortion use an image that has approximately the right aspect ratio.
+By default, \pkg{beamer} slides are 128\,mm $\times$ 96\,mm, which is a 4:3 ratio.
 
 \begin{frame}[fragile]{Progress meter}
 Slides show progress information at the bottom right in the form of a dial or

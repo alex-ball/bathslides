@@ -86,7 +86,7 @@ first two steps.
 Licence
 -------
 
-Copyright 2015 Alex Ball.
+Copyright 2016 Alex Ball.
 
 This work consists of the documented LaTeX file bathslides.dtx,
 and a Makefile.
