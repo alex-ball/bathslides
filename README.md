@@ -75,8 +75,8 @@ first two steps.
 
       - `source/latex/bathslides`: bathslides.dtx, bathslides.ins
       - `tex/latex/bathslides`: bathcolors.sty, bathslides.cls,
-        beamerthemeBath.sty, and (optionally) the separately
-        available image files as noted above
+        beamerthemeBath.sty, and the separately available image files
+        as noted above (unless you have a better place to keep logos)
       - `doc/latex/bathslides`: bathslides.pdf, bathslides-slides.pdf,
         README.md
 
@@ -96,8 +96,8 @@ under the conditions of the [LaTeX Project Public License (LPPL)][lppl],
 either version 1.3c of this license or (at your option) any later
 version.
 
-This work is "maintained" (as per LPPL maintenance status) by [Alex
-Ball][me].
+This work is "maintained" (as per LPPL maintenance status) by
+[Alex Ball][me].
 
 [beamerswitch]: https://github.com/alex-ball/beamerswitch
 [Releases]: https://github.com/alex-ball/bathslides/releases

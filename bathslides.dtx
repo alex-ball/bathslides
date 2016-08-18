@@ -89,8 +89,8 @@ first two steps.
 
       - `source/latex/bathslides`: bathslides.dtx, bathslides.ins
       - `tex/latex/bathslides`: bathcolors.sty, bathslides.cls,
-        beamerthemeBath.sty, and (optionally) the separately
-        available image files as noted above
+        beamerthemeBath.sty, and the separately available image files
+        as noted above (unless you have a better place to keep logos)
       - `doc/latex/bathslides`: bathslides.pdf, bathslides-slides.pdf,
         README.md
 
@@ -110,8 +110,8 @@ under the conditions of the [LaTeX Project Public License (LPPL)][lppl],
 either version 1.3c of this license or (at your option) any later
 version.
 
-This work is "maintained" (as per LPPL maintenance status) by [Alex
-Ball][me].
+This work is "maintained" (as per LPPL maintenance status) by
+[Alex Ball][me].
 
 [beamerswitch]: https://github.com/alex-ball/beamerswitch
 [Releases]: https://github.com/alex-ball/bathslides/releases
@@ -522,7 +522,7 @@ Produce a document in article mode, plus a set of slides\only<article>{
 Since this class was first released, the mode switching aspects have been
 improved and separated out into a separate class file, \pkg{beamerswitch}.
 The options above are only a subset; please see the \pkg{beamerswitch}
-documentation for full details. Note that the \key{set} option is now simply
+documentation for the full set. Note that the \key{set} option is now simply
 shorthand for \key{article} and \key{alsobeamer}.
 
 \subsection{Loading the theme}
@@ -758,7 +758,8 @@ Wrap the command in a bare frame, as you would for \cs{maketitle}:
 \end{docCommand}
 \end{frame}
 
-In article mode, \cs{finale} inserts a postscript consisting of a horizontal line followed by the licence (if provided) and group or University information.
+In article mode, \cs{finale} inserts a postscript consisting of a horizontal line
+followed by the licence (if provided) and group or University information.
 
 \begin{frame}
 \finale
@@ -1251,6 +1252,7 @@ numbers here are totally fictitious when it comes to the actual files.
 % is chosen needs to have an approximate aspect ratio of 4:3.
 %
 % \begin{macro}{bgpicture}
+% \begin{optionkey}{background}
 % The method used is to save the filename of the image to \cs{bgpicture}, and let
 % the user change it with a frame option, `background'.
 %
@@ -1269,8 +1271,10 @@ numbers here are totally fictitious when it comes to the actual files.
   }{}%
 }
 %    \end{macrocode}
+% \end{optionkey}
 % \end{macro}
 %
+% \begin{optionkey}{nosection}
 % We also provide a slide option for suppressing the display of the section.
 %
 %    \begin{macrocode}
@@ -1279,6 +1283,7 @@ numbers here are totally fictitious when it comes to the actual files.
   \iftoggle{titlepage}{\togglefalse{titlepage}}{\toggletrue{titlepage}}
 }
 %    \end{macrocode}
+% \end{optionkey}
 %
 % The normal template consists of a coloured bar and the University logo.
 % The coloured bar also contains the hashtag, if provided, and the
@@ -1376,7 +1381,7 @@ numbers here are totally fictitious when it comes to the actual files.
 }
 %    \end{macrocode}
 %
-% We use a right sidebar containing a clock-style progress counter.
+% We use a right sidebar that inserts the chosen progress template.
 %
 %    \begin{macrocode}
 \setbeamersize{sidebar width right=7mm}
@@ -1461,7 +1466,9 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 %    \begin{macrocode}
 \providetoggle{isodate}
-\@ifpackageloaded{isodate}{\toggletrue{isodate}}{\togglefalse{isodate}}
+\AtBeginDocument{%
+  \@ifpackageloaded{isodate}{\toggletrue{isodate}}{\togglefalse{isodate}}%
+}
 \RequirePackage{array}
 \setbeamertemplate{title page}{%
   \global\toggletrue{titlepage}%
