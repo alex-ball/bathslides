@@ -35,22 +35,27 @@ successfully, you will need the minted package installed and working.
 
 A makefile is provided which you can use with the Make utility:
 
-  * Running `make` generates the derived files
+  * Running `make bathslides.cls` generates the derived files
 
       - README.md
+      - bathslides.cls
+      - beamerthemeBath.sty
+      - bathcolors.sty
+      - bathslides.ins
+
+  * Running `make` generates the above plus
+
       - bathslides.pdf
       - bathslides-slides.pdf
-      - bathslides.cls
-      - beamerthemeBath
-      - bathcolors.sty
 
     It also downloads `uob-logo-grey-transparent.eps` using `wget` and
     generates `uob-logo-grey-transparent.pdf` using `epstopdf`.
 
   * Running `make inst` installs the files (and images) in the user's
-    TeX tree.
+    TeX tree. (To undo, run `make uninst`.)
+
   * Running `make install` installs the files (and images) in the
-    local TeX tree.
+    local TeX tree. (To undo, run `make uninstall`.)
 
 The makefile is set up to use latexmk and lualatex by default.
 If this causes difficulty you could change it to use pdflatex directly
@@ -60,27 +65,37 @@ instead.
 
 To install the class from scratch, follow these instructions. If you have
 downloaded the zip file from the [Releases] page on GitHub, you can skip the
-first two steps.
+first three steps.
 
- 1. Compile bathslides.dtx just as you would a normal LaTeX file. You will
-    need to enable shell escape for minted to work properly. As well
-    as the usual PDF (or DVI) and auxiliary files, several others are
-    generated.
+ 1. Run `etex bathslides.dtx` to generate the class and package files. (You can
+    safely skip this step if you are confident about step 2.)
 
- 2. Compile bathslides.dtx a second time with `-jobname=bathslides-slides`
+ 2. Compile bathslides.dtx using your favourite version of LaTeX with shell
+    escape enabled (as required by minted for typesetting the listings). You
+    will also need to run it through `makeindex`. This will generate the main
+    documentation (DVI or PDF).
+
+ 3. Compile bathslides.dtx a second time with `-jobname=bathslides-slides`
     as a command line option to generate the sample slides. Again, you will
-    need to enable shell escape for minted to work properly.
+    need to enable shell escape so that minted can mark up the code listings.
 
- 3. Move the files to your TeX tree as follows:
+ 4. Move the files to your TeX tree as follows:
 
-      - `source/latex/bathslides`: bathslides.dtx, bathslides.ins
-      - `tex/latex/bathslides`: bathcolors.sty, bathslides.cls,
-        beamerthemeBath.sty, and the separately available image files
-        as noted above (unless you have a better place to keep logos)
-      - `doc/latex/bathslides`: bathslides.pdf, bathslides-slides.pdf,
+      - `source/latex/bathslides`:
+        bathslides.dtx,
+        bathslides.ins
+      - `tex/latex/bathslides`:
+        bathcolors.sty,
+        bathslides.cls,
+        beamerthemeBath.sty,
+        and the separately available image files as noted above
+        (unless you have a better place to keep logos)
+      - `doc/latex/bathslides`:
+        bathslides.pdf,
+        bathslides-slides.pdf,
         README.md
 
- 4. You may then have to update your installation's file name database
+ 5. You may then have to update your installation's file name database
     before TeX and friends can see the files.
 
 Licence

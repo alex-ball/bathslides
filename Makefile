@@ -9,7 +9,7 @@ UTREE = $(shell kpsewhich --var-value TEXMFHOME)
 all:	uob-logo-grey-transparent.eps uob-logo-grey-transparent.pdf $(NAME).pdf $(NAME)-slides.pdf clean
 	@exit 0
 $(NAME).cls: $(NAME).dtx
-	lualatex -synctex=1 -shell-escape -interaction=batchmode $(NAME).dtx >/dev/null
+	etex -interaction=batchmode $(NAME).dtx >/dev/null
 $(NAME).pdf: $(NAME).cls
 	latexmk -silent -lualatex -synctex=1 -shell-escape -interaction=batchmode $(NAME).dtx >/dev/null
 $(NAME)-slides.pdf: $(NAME).cls
