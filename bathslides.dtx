@@ -718,7 +718,7 @@ In article mode, article-only text is shown in a serif font,
 while text that also appears on a slide is shown in a sans serif font,
 so you can tell them apart.
 
-\begin{frame}[fragile]{Frame options}
+\begin{frame}[fragile,nosection]{Frame options}
 The class provides some new options for frames.
 
 \begin{docKey}{nosection}{}{no value, initially unset}
@@ -1299,7 +1299,6 @@ numbers here are totally fictitious when it comes to the actual files.
 %    \begin{macrocode}
 \define@key{beamerframe}{nosection}[true]{%
   \settoggle{titlepage}{#1}
-  \iftoggle{titlepage}{\togglefalse{titlepage}}{\toggletrue{titlepage}}
 }
 %    \end{macrocode}
 % \end{optionkey}
