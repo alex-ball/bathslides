@@ -1343,22 +1343,25 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 %    \begin{macrocode}
 \defbeamertemplate*{progress}{dial}{%
-  \centering
-  \usebeamercolor{palette sidebar tertiary}%
-  \begin{tikzpicture}
-    \pgfmathparse{equal(\inserttotalframenumber,1)}%
-    \ifnum1=\pgfmathresult
-      \def\PerCentComplete{360}%
-    \else
-      \pgfmathqparse{360pt * ((\insertframenumber pt - 1pt) / (\inserttotalframenumber pt - 1pt))}%
-      \let\PerCentComplete\pgfmathresult
-    \fi
-    \draw[fg,fill=bg] (0,0mm)
-      -- (90:2.1mm)
-      arc[start angle=90, delta angle=-\PerCentComplete, radius=2.1mm]
-      -- cycle;
-    \draw[fg] (0,0) circle[radius=2.1mm];
-  \end{tikzpicture}%
+  \ifbeamer@inappendix\relax\else
+    \centering
+    \usebeamercolor{palette sidebar tertiary}%
+    \begin{tikzpicture}
+      \pgfmathparse{equal(\insertmainframenumber,1)}%
+      \ifnum1=\pgfmathresult
+        \def\PerCentComplete{360}%
+      \else
+        \pgfmathqparse{360pt * ((\insertframenumber pt - 1pt) /
+          (\insertmainframenumber pt - 1pt))}%
+        \let\PerCentComplete\pgfmathresult
+      \fi
+      \draw[fg,fill=bg] (0,0mm)
+        -- (90:2.1mm)
+        arc[start angle=90, delta angle=-\PerCentComplete, radius=2.1mm]
+        -- cycle;
+      \draw[fg] (0,0) circle[radius=2.1mm];
+    \end{tikzpicture}%
+  \fi
 }
 %    \end{macrocode}
 %
@@ -1370,8 +1373,14 @@ numbers here are totally fictitious when it comes to the actual files.
 \newlength{\ProgressNumber}
 \defbeamertemplate{progress}{fraction}{%
   \centering
-  \settowidth{\ProgressNumber}{\inserttotalframenumber\slash\inserttotalframenumber}%
-  \makebox[\ProgressNumber][r]{\insertframenumber\slash\inserttotalframenumber}%
+  \ifbeamer@inappendix
+    \settowidth{\ProgressNumber}{\inserttotalframenumber}%
+    \makebox[\ProgressNumber][r]{\insertframenumber}%
+  \else
+    \settowidth{\ProgressNumber}{%
+      \insertmainframenumber\slash\insertmainframenumber}%
+    \makebox[\ProgressNumber][r]{\insertframenumber\slash\insertmainframenumber}%
+  \fi
 }
 %    \end{macrocode}
 % \end{macro}
