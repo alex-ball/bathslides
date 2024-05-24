@@ -8,12 +8,63 @@
 \fi
 % \iffalse
 %</internal>
-%<*internal|class|palette|theme>
+%<*internal|class|palette|theme|theme2>
 \def\Version{2016/08/16 v3.0}
-%</internal|class|palette|theme>
+%</internal|class|palette|theme|theme2>
 %<*internal>
 \iffalse
 %</internal>
+%<*class|theme|theme2|palette>
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%</class|theme|theme2|palette>
+%<*class>
+\ProvidesClass{bathslides}
+    [\Version\space Class for University of Bath presentations]
+%</class>
+%<*theme>
+\ProvidesPackage{beamerthemeBath}
+    [\Version\space Beamer theme for University of Bath presentations (2015 version)]
+%</theme>
+%<*theme2>
+\ProvidesPackage{beamerthemeBath2021}
+    [\Version\space Beamer theme for University of Bath presentations (2021 version)]
+%</theme2>
+%<*palette>
+\ProvidesPackage{bathcolors}
+    [\Version\space Colour palette for University of Bath documents]
+%</palette>
+%<*sample1>
+\documentclass[beameroptions={aspectratio=169}]{bathslides}
+%</sample1>
+%<*sample2>
+\documentclass[2021,beameroptions={aspectratio=169}]{bathslides}
+%</sample2>
+%<*sample1|sample2>
+\usepackage{charity}
+\title{Sample Presentation}
+\author{Anne Author}
+\date{2016-07-01}
+\begin{document}
+  \begin{frame}{Sample slide}
+    Here is some block text
+    \begin{itemize}
+      \item List item 1
+      \item List item 2
+      \item List item 3
+      \item List item 4
+      \begin{itemize}
+        \item List subitem 4.1
+        \item List subitem 4.2
+        \begin{itemize}
+          \item List subsubitem 4.2.1
+          \item List subsubitem 4.2.2
+        \end{itemize}
+      \end{itemize}
+      \item List item 5
+    \end{itemize}
+  \end{frame}
+\end{document}
+%</sample1|sample2>
 %<*readme>
 The bathslides class: University of Bath presentations
 =========================================================
@@ -138,21 +189,6 @@ This work is "maintained" (as per LPPL maintenance status) by
 [me]: http://alexball.me.uk/
 
 %</readme>
-%<*class|theme|palette>
-\NeedsTeXFormat{LaTeX2e}[1999/12/01]
-%</class|theme|palette>
-%<*class>
-\ProvidesClass{bathslides}
-    [\Version\space Class for University of Bath presentations]
-%</class>
-%<*theme>
-\ProvidesPackage{beamerthemeBath}
-    [\Version\space Beamer theme for University of Bath presentations]
-%</theme>
-%<*palette>
-\ProvidesPackage{bathcolors}
-    [\Version\space Colour palette for University of Bath documents]
-%</palette>
 %<*internal>
 \fi
 \def\nameofplainTeX{plain}
@@ -205,7 +241,10 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
 \generate{
   \file{bathslides.cls}{\from{\jobname.dtx}{class}}
   \file{bathcolors.sty}{\from{\jobname.dtx}{palette}}
+  \file{bathslides-sample-Bath.tex}{\from{\jobname.dtx}{sample1}}
+  \file{bathslides-sample-Bath2021.tex}{\from{\jobname.dtx}{sample2}}
   \file{beamerthemeBath.sty}{\from{\jobname.dtx}{theme}}
+  \file{beamerthemeBath2021.sty}{\from{\jobname.dtx}{theme2}}
 }
 %</install>
 %<install>\endbatchfile
@@ -312,6 +351,7 @@ Copyright (C) 2016 Alex Ball <a.j.ball@bath.ac.uk>
 
 % For typesetting the user documentation
 \newcommand{\pkg}[1]{\href{http://www.ctan.org/pkg/#1}{\textsf{#1}}}
+\newrobustcmd{\bthm}[1]{\textcolor{Color}{\textsf{#1}}}
 \let\tcbcs=\cs
 \renewcommand*{\cs}[1]{\textcolor{Command}{\tcbcs{#1}}}
 \def\sqbrackets#1{%
@@ -543,6 +583,34 @@ improved and separated out into a separate class file, \pkg{beamerswitch}.
 The options above are only a subset; please see the \pkg{beamerswitch}
 documentation for the full set. Note that the \key{set} option is now simply
 shorthand for \key{article} and \key{alsobeamer}.
+
+% A 4:3 slide has a line width of 108mm.
+% A 16:9 slide has a line width of 140mm.
+% The article page has a line width of 150mm.
+\begin{frame}[fragile]{Using the class}
+  \setlength{\fboxsep}{0pt}%
+  \only<presentation>{\setlength{\columnsep}{7mm}}%
+  \only<article>{\setlength{\columnsep}{12mm}}%
+  \begin{multicols}{2}[There are also options for choosing between the two available themes.]
+  \begin{docKey}{2015}{}{initially set}
+    Use the \bthm{Bath} theme.
+  \end{docKey}
+  \par\only<presentation>{\medskip}%
+  \par\bgroup\centering
+  \fbox{\includegraphics[height=3.15cm]{bathslides-sample-Bath}}
+  \par\egroup
+  \columnbreak
+  \begin{docKey}{2021}{}{initially unset}
+  \raggedright
+    Use the \bthm{Bath2021} theme.
+  \end{docKey}
+  \par\only<presentation>{\medskip}%
+  \par\bgroup\centering
+  \fbox{\includegraphics[height=3.15cm]{bathslides-sample-Bath2021}}
+  \par\egroup
+  \end{multicols}
+\end{frame}
+  
 
 \subsection{Loading the theme}
 
@@ -805,7 +873,7 @@ numbers here are totally fictitious when it comes to the actual files.
 %</driver>
 % \fi
 % \iffalse
-%<*class|theme>
+%<*class|theme|theme2>
 % \fi
 %
 % \subsection{Internal conveniences}
@@ -819,11 +887,24 @@ numbers here are totally fictitious when it comes to the actual files.
 
 %    \end{macrocode}
 %
-% \subsection{Options and mode switching}
 % \iffalse
-%</class|theme>
+%</class|theme|theme2>
 %<*class>
 % \fi
+%
+% \subsection{Class: Options and mode switching}
+%
+% \begin{optionkey}{2015}
+% \begin{optionkey}{2021}
+% We provide keys for choosing between the available themes.
+%
+%    \begin{macrocode}
+\def\bathslides@theme{Bath}
+\DeclareOption{2015}{\def\bathslides@theme{Bath}}
+\DeclareOption{2021}{\def\bathslides@theme{Bath2021}}
+%    \end{macrocode}
+% \end{optionkey}
+% \end{optionkey}
 %
 % \begin{optionkey}{set}
 % Mode switching is delegated to \pkg{beamerswitch}, but we need to support the
@@ -836,7 +917,7 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 % \iffalse
 %</class>
-%<*class|theme>
+%<*class|theme|theme2>
 % \fi
 %
 % \begin{optionkey}{darkgrey}
@@ -876,7 +957,7 @@ numbers here are totally fictitious when it comes to the actual files.
 % \end{optionkey}
 %
 % \iffalse
-%</class|theme>
+%</class|theme|theme2>
 %<*class>
 % \fi
 %
@@ -890,7 +971,7 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 % \iffalse
 %</class>
-%<*class|theme>
+%<*class|theme|theme2>
 % \fi
 %
 % We set the default colour scheme (unless the scheme has already been chosen).
@@ -902,7 +983,7 @@ numbers here are totally fictitious when it comes to the actual files.
 %    \end{macrocode}
 %
 % \iffalse
-%</class|theme>
+%</class|theme|theme2>
 %<*class>
 % \fi
 %
@@ -1050,12 +1131,38 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 % \subsection{Theme: Presentation font theme}
 %
-% Some sensible font sizes and weights for use on slides.
+% Some sensible font sizes and weights for use on slides. The 2015 theme uses
+% an elegant and modest size change to distinguish slide titles.
 %
 %    \begin{macrocode}
 \setbeamerfont{frametitle}{size=\LARGE}
 \setbeamerfont{framesubtitle}{size=\large}
-\setbeamerfont{section in head/foot}{size=\normalsize}
+\setbeamerfont{section in head/foot}{size=\normalsize,shape=\scshape,family=\rmfamily}
+%    \end{macrocode}
+% \iffalse
+%</theme>
+%<*theme2>
+% \fi
+%
+% The 2021 theme is brassier with a bigger, bolder title.
+%
+%    \begin{macrocode}
+\setbeamerfont{title}{size=\HUGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\LARGE}
+\setbeamerfont{frametitle}{size=\huge,series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\Large}
+\setbeamerfont{section in head/foot}{size=\normalsize,shape=\scshape}
+%    \end{macrocode}
+% \iffalse
+%</theme2>
+%<*theme|theme2>
+%
+% The other font choices are standard between the themes
+%
+% \fi
+%    \begin{macrocode}
+\setbeamerfont*{section title}{parent=title}
+\setbeamerfont*{subsection title}{parent=subtitle}
 \setbeamerfont{headline}{size=\normalsize}
 \setbeamerfont{sidebar}{size=\tiny}
 \setbeamerfont{footline}{size=\scriptsize}
@@ -1065,8 +1172,8 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 % \subsection{Theme: Presentation colour theme}
 % \iffalse
-%</theme>
-%<*class|theme>
+%</theme|theme2>
+%<*class|theme|theme2>
 % \fi
 %
 % The colour palette for the presentation:
@@ -1082,14 +1189,38 @@ numbers here are totally fictitious when it comes to the actual files.
 %    \end{macrocode}
 %
 % \iffalse
-%</class|theme>
+%</class|theme|theme2>
 %<*theme>
 % \fi
 %
-% Here are the basic colours:
+% In the 2015 theme, one of the things that helps distinguish slide titles from
+% ordinary text is the colour.
 %
 %    \begin{macrocode}
 \setbeamercolor{normal text}{bg=white,fg=black}
+%    \end{macrocode}
+%
+% \iffalse
+%</theme>
+%<*theme2>
+% \fi
+%
+% In the 2021 theme, the font choice does the heavy lifting so there is less
+% colour contrast.
+%
+%    \begin{macrocode}
+\setbeamercolor{normal text}{bg=white,fg=primary}
+%    \end{macrocode}
+% \iffalse
+%</theme2>
+%<*theme|theme2>
+% \fi
+%    \begin{macrocode}
+%    \end{macrocode}
+%
+% Here are the other basic colours:
+%
+%    \begin{macrocode}
 \setbeamercolor{alerted text}{fg=contrast}
 \setbeamercolor{example text}{fg=Violet}
 \setbeamercolor{structure}{fg=primary}
@@ -1128,7 +1259,7 @@ numbers here are totally fictitious when it comes to the actual files.
 %    \end{macrocode}
 %
 % \iffalse
-%</theme>
+%</theme|theme2>
 %<*class>
 % \fi
 %
@@ -1211,7 +1342,7 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 % \iffalse
 %</class>
-%<*theme>
+%<*theme|theme2>
 % \fi
 %
 % \subsection{Theme: Presentation outer theme}
@@ -1224,12 +1355,33 @@ numbers here are totally fictitious when it comes to the actual files.
   \RequirePackage{tikz,tcolorbox}
 }
 %    \end{macrocode}
+% \iffalse
+%</theme|theme2>
+%<*theme>
+% \fi
 %
-% We allow a little more horizontal space by squeezing the margins
+% In the 2015 theme, we allow a little more horizontal space by squeezing the
+% margins.
 %
 %    \begin{macrocode}
 \setbeamersize{text margin left=4mm,text margin right=4mm}
 %    \end{macrocode}
+% \iffalse
+%</theme>
+%<*theme2>
+% \fi
+%
+% The 2021 theme is not as constricted horizontally so can afford more generous
+% margins.
+%
+%    \begin{macrocode}
+\setbeamersize{text margin left=0.1\paperwidth,text margin right=0.1\paperwidth}
+%    \end{macrocode}
+%
+% \iffalse
+%</theme2>
+%<*theme|theme2>
+% \fi
 %
 % We introduce a toggle, |titlepage|, that can be used to provide a
 % different layout depending on whether this is a normal or a title slide.
@@ -1282,22 +1434,28 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 % \begin{optionkey}{nosection}
 % We also provide a slide option for suppressing the display of the section.
+% This is automatically suppressed in title slides.
 %
 %    \begin{macrocode}
 \define@key{beamerframe}{nosection}[true]{%
   \settoggle{titlepage}{#1}
 }
-%    \end{macrocode}
-% \end{optionkey}
-%
-% The normal template consists of a coloured bar and the University logo.
-% The coloured bar also contains the hashtag, if provided, and the
-% section titles (unless this is a title slide).
-%
-%    \begin{macrocode}
 \defbeamertemplate*{section in head/foot}{Bath theme}{%
   \iftoggle{titlepage}{}{\hypersetup{linkcolor=fg}\insertsectionhead}%
 }
+%    \end{macrocode}
+% \end{optionkey}
+%
+% \iffalse
+%</theme|theme2>
+%<*theme>
+% \fi
+%
+% The 2015 header template consists of a coloured bar and the University logo.
+% The coloured bar also contains the hashtag, if provided, and the
+% section titles.
+%
+%    \begin{macrocode}
 \defbeamertemplate*{headline}{Bath theme}{%
   \begin{tikzpicture}[remember picture, overlay]
     \coordinate[xshift=-9mm, yshift=-4mm] (logo-ne) at (current page.north east);
@@ -1311,27 +1469,43 @@ numbers here are totally fictitious when it comes to the actual files.
       -- (topbar-ne) [sharp corners]
       -- cycle;
     \coordinate[yshift=-9.5mm] (topbar-text-w) at (current page.north west);
-    \node[text=fg,font=\rmfamily\scshape,anchor=west,text width=7cm,inner xsep=4mm,align=left] at (topbar-text-w)
-      {\usebeamertemplate{section in head/foot}};
+    \node[text=fg,anchor=west,text width=7cm,inner xsep=4mm,align=left] at (topbar-text-w)
+      {\usebeamerfont{section in head/foot}\usebeamertemplate{section in head/foot}};
     \node[text=fg,font=\scriptsize,anchor=east,inner xsep=4mm,align=left] at (logo.west)
       {\ifdefvoid{\inserthashtag}{}{\inserthashtag}};
   \end{tikzpicture}
 }
 %    \end{macrocode}
 %
-% To make the section heading all small caps, we need to patch the
-% \cs{sectionentry} and \cs{beamer@section} commands.
+% \iffalse
+%</theme>
+%<*theme2>
+% \fi
+%
+% The 2021 header template does the same job but is much more compact.
 %
 %    \begin{macrocode}
-\patchcmd{\sectionentry}%
-  {\def\insertsectionhead{#2}}%
-  {\def\insertsectionhead{\MakeLowercase{#2}}}%
-  {}{}
-\patchcmd{\beamer@section}%
-  {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{#1}}}%
-  {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{\MakeLowercase{#1}}}}%
-  {}{}
+\defbeamertemplate*{headline}{Bath theme}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[fill=Slate,draw=Slate,inner sep=0pt,minimum height=6.3mm,minimum width=19.4mm,align=center,anchor=north east]
+      (logo) at (current page.north east)
+      {\includegraphics[height=4.7mm]{uob-logo-white-transparent}};
+    \coordinate[xshift=-1mm,yshift=-1.1mm] (topbar-ne) at (logo.north west);
+    \coordinate[xshift=-1mm,yshift=1.1mm] (topbar-se) at (logo.south west);
+    \fill[bg] (current page.north west) rectangle (logo.south west);
+    \coordinate[xshift=0.1\paperwidth,yshift=-3.15mm] (topbar-text-w) at (current page.north west);
+    \node[text=fg,anchor=west,inner xsep=0mm,align=left] at (topbar-text-w)
+      {\usebeamerfont{section in head/foot}\usebeamertemplate{section in head/foot}};
+    \node[text=fg,font=\scriptsize,anchor=east,inner xsep=4mm,align=left] at (logo.west)
+      {\ifdefvoid{\inserthashtag}{}{\inserthashtag}};
+  \end{tikzpicture}
+}
 %    \end{macrocode}
+%
+% \iffalse
+%</theme2>
+%<*theme|theme2>
+% \fi
 %
 % We provide a variety of progress indicators.
 %
@@ -1345,7 +1519,6 @@ numbers here are totally fictitious when it comes to the actual files.
 \defbeamertemplate*{progress}{dial}{%
   \ifbeamer@inappendix\relax\else
     \centering
-    \usebeamercolor{palette sidebar tertiary}%
     \begin{tikzpicture}
       \pgfmathparse{equal(\insertmainframenumber,1)}%
       \ifnum1=\pgfmathresult
@@ -1355,7 +1528,7 @@ numbers here are totally fictitious when it comes to the actual files.
           (\insertmainframenumber pt - 1pt))}%
         \let\PerCentComplete\pgfmathresult
       \fi
-      \draw[fg,fill=bg] (0,0mm)
+      \draw[fg,fill=fg!50!bg] (0,0mm)
         -- (90:2.1mm)
         arc[start angle=90, delta angle=-\PerCentComplete, radius=2.1mm]
         -- cycle;
@@ -1395,7 +1568,12 @@ numbers here are totally fictitious when it comes to the actual files.
 }
 %    \end{macrocode}
 %
-% We use a right sidebar that inserts the chosen progress template.
+% \iffalse
+%</theme|theme2>
+%<*theme>
+% \fi
+%
+% The 2015 theme has a right sidebar that inserts the chosen progress template.
 %
 %    \begin{macrocode}
 \setbeamersize{sidebar width right=7mm}
@@ -1405,10 +1583,9 @@ numbers here are totally fictitious when it comes to the actual files.
   \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
   \vskip 4pt
 }
-
 %    \end{macrocode}
 %
-% This is our new version of the `frametitle' template.
+% This is the 2015 version of the `frametitle' template.
 %
 %    \begin{macrocode}
 \defbeamertemplate*{frametitle}{bathtitle}{%
@@ -1425,12 +1602,53 @@ numbers here are totally fictitious when it comes to the actual files.
     \vskip-1ex%
   \end{beamercolorbox}%
 }
-
 %    \end{macrocode}
+%
+% \iffalse
+%</theme>
+%<*theme2>
+% \fi
+%
+% In the 2021 theme, we move the progress template and navigation symbols to the footer.
+%
+%    \begin{macrocode}
+\defbeamertemplate*{sidebar right}{progress}{}
+\defbeamertemplate*{footline}{progress}{%
+  \hfill
+  \parbox{7mm}{\usebeamertemplate{progress}}\par
+  \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
+  \vskip 4pt
+}
+%    \end{macrocode}
+%
+% The 2021 version of the `frametitle' template has different spacing.
+%
+%    \begin{macrocode}
+\defbeamertemplate*{frametitle}{bathtitle}{%
+  \ifbeamercolorempty[bg]{frametitle}{}{\nointerlineskip}%
+  \begin{beamercolorbox}{frametitle}
+    \usebeamerfont{frametitle}%
+    \ifbool{beamer@plainframe}{}{\vbox to 18mm{}}%
+    \strut\insertframetitle\strut\par%
+    {%
+      \ifdefvoid{\insertframesubtitle}{}{%
+        \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par
+      }%
+    }%
+    \vskip-0.7ex%
+  \end{beamercolorbox}%
+}
+%    \end{macrocode}
+%
+% \iffalse
+%</theme2>
+%<*theme|theme2>
+% \fi
 %
 % By default we remove the tell-tale and seldom used \pkg{beamer} navigation symbols.
 %
 %    \begin{macrocode}
+
 \setbeamertemplate{navigation symbols}{}
 
 %    \end{macrocode}
@@ -1446,6 +1664,16 @@ numbers here are totally fictitious when it comes to the actual files.
 %    \end{macrocode}
 %
 % \subsection{Theme: Presentation inner theme}\label{sec:inner}
+%
+% Itemized lists use chevrons at the top level, en dashes at the second, and
+% circles at the third.
+%
+%    \begin{macrocode}
+\AtEndPreamble{\RequirePackage{fontawesome}}
+\defbeamertemplate*{itemize item}{chevron}{\faAngleRight}
+\defbeamertemplate*{itemize subitem}{dash}{\textbf{\textendash}}
+\setbeamertemplate{itemize subsubitem}[circle]
+%    \end{macrocode}
 %
 % \begin{macro}{hookpretitle}
 % \begin{macro}{hooktitleauthor}
@@ -1475,15 +1703,33 @@ numbers here are totally fictitious when it comes to the actual files.
 % \end{macro}
 % \end{macro}
 %
-% We suppress any sectional information, not that there should be any at this
-% point, then we add a strut to account for the header bar at the top.
+% We include \pkg{isodate} handling for the date on the title page.
+%
+% If \cs{and} is used in the insititute declaration it produces some odd
+% spacing, so we correct that by adding a strut.
 %
 %    \begin{macrocode}
+\RequirePackage{array}
 \providetoggle{isodate}
 \AtBeginDocument{%
   \@ifpackageloaded{isodate}{\toggletrue{isodate}}{\togglefalse{isodate}}%
 }
-\RequirePackage{array}
+\def\beamer@andinst{\rule{0pt}{\baselineskip + \smallskipamount}\\[\smallskipamount]%
+  \def\beamer@andinst{\\[\smallskipamount]}%
+}
+%    \end{macrocode}
+%
+% \iffalse
+%</theme|theme2>
+%<*theme>
+% \fi
+%
+% This is the 2015 title page.
+%
+% We suppress any sectional information, not that there should be any at this
+% point, then we add a strut to account for the header bar at the top.
+%
+%    \begin{macrocode}
 \setbeamertemplate{title page}{%
   \global\toggletrue{titlepage}%
   \vbox to 16.8mm{}%
@@ -1552,18 +1798,90 @@ numbers here are totally fictitious when it comes to the actual files.
 }
 %    \end{macrocode}
 %
-% If \cs{and} is used in the insititute declaration it produces some odd
-% spacing, so we correct that by adding a strut.
+% \iffalse
+%</theme>
+%<*theme2>
+% \fi
+%
+% This is the 2021 version of the title page. There are some spacing changes,
+% and the title is not put in a fancy box.
 %
 %    \begin{macrocode}
-\def\beamer@andinst{\rule{0pt}{\baselineskip + \smallskipamount}\\[\smallskipamount]%
-  \def\beamer@andinst{\\[\smallskipamount]}%
+\setbeamertemplate{title page}{%
+  \global\toggletrue{titlepage}%
+  \vbox to 13mm{}%
+    \hookpretitle
+    \begin{beamercolorbox}[sep=0pt]{title}
+        \usebeamerfont{title}\inserttitle\par%
+        \ifdefvoid{\insertsubtitle}{}{%
+          \vskip 0.1em%
+          {\usebeamerfont{subtitle}\insertsubtitle\par}%
+        }%
+    \end{beamercolorbox}%
+    \hooktitleauthor
+    \begin{beamercolorbox}{author}
+      \usebeamerfont{author}\insertauthor
+    \end{beamercolorbox}
+    \hookauthorinstitute
+    \begin{beamercolorbox}{institute}
+      \usebeamerfont{institute}\insertinstitute
+    \end{beamercolorbox}
+    \hookinstituteoccasion
+    \begin{beamercolorbox}{date}
+      \usebeamerfont{date}%
+      \ifdefvoid{\insertoccasion}{}{\insertoccasion}%
+      \hookoccasiondate
+      \iftoggle{isodate}{\printdate{\insertdate}}{\insertdate}
+    \end{beamercolorbox}
+    \hookdategraphic
+    {\usebeamercolor[fg]{titlegraphic}\inserttitlegraphic\par}
+    \hookpostgraphic
+  \vfill
+  \begin{beamercolorbox}[leftskip=5mm]{institute}
+    \usebeamerfont{institute}
+    \begin{tabular}{@{}m{6em}m{25em}@{}}
+      \ifdefvoid{\licenseLogo}{}{%
+        \ifdefvoid{\licenseUrl}{\licenseLogo}{\href{\licenseUrl}{\licenseLogo}}%
+      } &
+      \ifdefvoid{\licenseStatement}{}{\licenseStatement} \\
+    \end{tabular}
+  \end{beamercolorbox}
+}
+%    \end{macrocode}
+%
+% \iffalse
+%</theme2>
+%<*theme|theme2>
+% \fi
+%
+% Section pages are simpler than the default.
+%
+%    \begin{macrocode}
+\setbeamertemplate{section page}{%
+  \global\toggletrue{titlepage}%
+  \vbox to 13mm{}%
+  \begin{beamercolorbox}[sep=0pt]{section title}
+    \usebeamerfont{section title}\insertsection\par%
+  \end{beamercolorbox}%
+}
+\setbeamertemplate{subsection page}{%
+  \global\toggletrue{titlepage}%
+  \vbox to 13mm{}%
+  \begin{beamercolorbox}[sep=0pt]{section title}
+    \usebeamerfont{section title}\insertsection\par%
+  \end{beamercolorbox}%
+  \ifdefvoid{\insertsubsection}{}{%
+    \vskip 1.3em%
+    \begin{beamercolorbox}[sep=0pt]{subsection title}
+      {\usebeamerfont{subsection title}\insertsubsection\par}%
+    \end{beamercolorbox}%
+  }%
 }
 
 %    \end{macrocode}
 %
 % \iffalse
-%</theme>
+%</theme|theme2>
 %<*class>
 % \fi
 %
@@ -1637,7 +1955,7 @@ numbers here are totally fictitious when it comes to the actual files.
 %
 % \iffalse
 %</class>
-%<*theme>
+%<*theme|theme2>
 % \fi
 %
 % \subsubsection{In the presentation inner theme}
@@ -1720,7 +2038,7 @@ numbers here are totally fictitious when it comes to the actual files.
 % \end{macro}
 %
 % \iffalse
-%</theme>
+%</theme|theme2>
 %<*class>
 % \fi
 %
@@ -1729,7 +2047,7 @@ numbers here are totally fictitious when it comes to the actual files.
 % For styling the presentation, we use the accompanying \pkg{beamer} theme.
 %
 %    \begin{macrocode}
-\usetheme{Bath}
+\usetheme{\bathslides@theme}
 %    \end{macrocode}
 %
 % \iffalse

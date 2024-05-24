@@ -6,31 +6,42 @@ TDIR  = $(TEMP)/$(NAME)
 VERS  = $(shell ltxfileinfo -v $(NAME).dtx)
 LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
 UTREE = $(shell kpsewhich --var-value TEXMFHOME)
+
+.PHONY: clean dist-clean inst install uninst uninstall zip
+
 all:	uob-logo-grey-transparent.eps uob-logo-grey-transparent.pdf $(NAME).pdf $(NAME)-slides.pdf clean
 	@exit 0
-$(NAME).cls: $(NAME).dtx
+$(NAME).cls $(NAME)-sample-Bath.tex $(NAME)-sample-Bath2021.tex: $(NAME).dtx
 	etex -interaction=batchmode $(NAME).dtx >/dev/null
-$(NAME).pdf: $(NAME).cls
+$(NAME)-sample-Bath.pdf: $(NAME)-sample-Bath.tex $(NAME).cls
+	latexmk -silent -lualatex -shell-escape -interaction=batchmode $< >/dev/null
+$(NAME)-sample-Bath2021.pdf: $(NAME)-sample-Bath2021.tex $(NAME).cls
+	latexmk -silent -lualatex -shell-escape -interaction=batchmode $< >/dev/null
+$(NAME).pdf: $(NAME).cls $(NAME)-sample-Bath.pdf $(NAME)-sample-Bath2021.pdf
 	latexmk -silent -lualatex -synctex=1 -shell-escape -interaction=batchmode $(NAME).dtx >/dev/null
 $(NAME)-slides.pdf: $(NAME).cls
 	latexmk -silent -lualatex -synctex=1 -shell-escape -interaction=batchmode -jobname=$(NAME)-slides $(NAME).dtx >/dev/null
 uob-logo-grey-transparent.eps:
-	wget http://www.bath.ac.uk/marketing/images/logos/eps/uob-logo-grey-transparent.eps
+	wget -O uob-logo-grey-transparent.eps https://computingservices.sharepoint.com/:u:/s/IDPS/ES6zW1mbIZlKlkjMTBjak3oBa9Jkude3Uc7IX0_Ihdu6Yw?e=oYTcZS
 uob-logo-grey-transparent.pdf: uob-logo-grey-transparent.eps
 	epstopdf uob-logo-grey-transparent.eps
+uob-logo-white-transparent.eps:
+	wget -O uob-logo-white-transparent.eps https://computingservices.sharepoint.com/:u:/s/IDPS/EZKTqWauU05FimzA0KG63_gB2ShXQKbGNmYswg0zJiiPEw?e=NjJVJd
+uob-logo-white-transparent.pdf: uob-logo-white-transparent.eps
+	epstopdf uob-logo-white-transparent.eps
 clean:
 	rm -f $(NAME).{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,listing,log,nav,out,run.xml,snm,synctex.gz,tcbtemp,toc,vrb}
-	rm -f $(NAME)-slides.{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,ins,listing,log,nav,out,run.xml,snm,synctex.gz,tcbtemp,toc,vrb}
+	rm -f $(NAME)-{slides,sample-Bath,sample-Bath2021}.{aux,bbl,bcf,blg,doc,fdb_latexmk,fls,glo,gls,hd,idx,ilg,ind,ins,listing,log,nav,out,run.xml,snm,synctex.gz,tcbtemp,toc,vrb}
 	rm -f bathcolors.doc beamerthemeBath.doc
 	rm -rf _minted-*
 distclean: clean
-	rm -f $(NAME).{pdf,ins} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamerthemeBath.sty
+	rm -f $(NAME).{pdf,ins} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamertheme{Bath,Bath2021}.sty $(NAME)-sample-{Bath,Bath2021}.{tex,pdf}
 inst: all
 	mkdir -p $(UTREE)/{tex,source,doc}/latex/$(NAME)
 	mkdir -p $(UTREE)/tex/generic/logos-ubath
 	cp $(NAME).dtx $(NAME).ins $(UTREE)/source/latex/$(NAME)
-	cp $(NAME).cls bathcolors.sty beamerthemeBath.sty $(UTREE)/tex/latex/$(NAME)
-	cp $(NAME).pdf $(NAME)-slides.pdf README.md $(UTREE)/doc/latex/$(NAME)
+	cp $(NAME).cls bathcolors.sty beamertheme{Bath,Bath2021}.sty $(UTREE)/tex/latex/$(NAME)
+	cp $(NAME).pdf $(NAME)-sample-{Bath,Bath2021}.{tex,pdf} $(NAME)-slides.pdf README.md $(UTREE)/doc/latex/$(NAME)
 	cp uob-logo-grey-transparent.{eps,pdf} $(UTREE)/tex/generic/logos-ubath
 	mktexlsr
 uninst:
@@ -42,8 +53,8 @@ install: all
 	sudo mkdir -p $(LOCAL)/{tex,source,doc}/latex/$(NAME)
 	sudo mkdir -p $(LOCAL)/tex/generic/logos-ubath
 	sudo cp $(NAME).dtx $(NAME).ins $(LOCAL)/source/latex/$(NAME)
-	sudo cp $(NAME).cls bathcolors.sty beamerthemeBath.sty $(LOCAL)/tex/latex/$(NAME)
-	sudo cp $(NAME).pdf $(NAME)-slides.pdf README.md $(LOCAL)/doc/latex/$(NAME)
+	sudo cp $(NAME).cls bathcolors.sty beamertheme{Bath,Bath2021}.sty $(LOCAL)/tex/latex/$(NAME)
+	sudo cp $(NAME).pdf $(NAME)-sample-{Bath,Bath2021}.{tex,pdf} $(NAME)-slides.pdf README.md $(LOCAL)/doc/latex/$(NAME)
 	sudo cp uob-logo-grey-transparent.{eps,pdf} $(LOCAL)/tex/generic/logos-ubath
 	mktexlsr
 uninstall:
@@ -53,5 +64,5 @@ uninstall:
 	mktexlsr
 zip: all
 	mkdir $(TDIR)
-	cp $(NAME).{pdf,dtx} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamerthemeBath.sty README.md Makefile $(TDIR)
+	cp $(NAME).{pdf,dtx} $(NAME)-slides.pdf $(NAME).cls bathcolors.sty beamertheme{Bath,Bath2021}.sty $(NAME)-sample-{Bath,Bath2021}.{tex,pdf} README.md Makefile $(TDIR)
 	cd $(TEMP); zip -Drq $(PWD)/$(NAME)-$(VERS).zip $(NAME)
