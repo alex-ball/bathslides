@@ -9,7 +9,7 @@
 % \iffalse
 %</internal>
 %<*internal|class|palette|theme|theme2>
-\def\Version{2016/08/16 v3.0}
+\def\Version{2024/07/01 v4.0}
 %</internal|class|palette|theme|theme2>
 %<*internal>
 \iffalse
@@ -82,17 +82,22 @@ Installation
 ### Pre-requisites ###
 
 To use this theme, you will need to have the image files
-`uob-logo-grey-transparent.pdf` (for PDF) and
-`uob-logo-grey-transparent.eps` (for DVI) somewhere TeX can find them.
+`uob-logo-grey-transparent.pdf` and `uob-logo-white-transparent.pdf` (for PDF)
+and `uob-logo-grey-transparent.eps` and `uob-logo-grey-transparent.eps` (for
+DVI) somewhere TeX can find them.
 I recommend you place them in the same folder as `bathslides.dtx`
 while compiling the class and in a `tex/generic/logos-ubath` folder
 thereafter.
 
-The files are not distributed with the theme for licensing reasons.
-You can download `uob-logo-grey-transparent.eps` from the
-[University of Bath website][logo]. To get the PDF version, run
-`epstopdf uob-logo-grey-transparent.eps`. The `epstopdf` utility is
-available in most TeX distributions.
+The files are not distributed with the theme, firstly for licensing reasons
+and secondly because access to them has been restricted to University of Bath
+members. If you have a working set of credentials, you can download the EPS
+files from the [University of Bath website][logo]; the two you need are listed
+under "Slate grey" and "White" respectively.
+
+To get the PDF versions, run `epstopdf uob-logo-grey-transparent.eps` and
+`epstopdf uob-logo-white-transparent.eps` respectively. The `epstopdf` utility
+is available in most TeX distributions.
 
 The documentation uses fonts from the XCharter and sourcesanspro
 packages, as well as sourcecodepro if XeLaTeX or LuaLaTeX is used,
@@ -108,16 +113,23 @@ A makefile is provided which you can use with the Make utility:
       - README.md
       - bathslides.cls
       - beamerthemeBath.sty
+      - beamerthemeBath2021.sty
       - bathcolors.sty
       - bathslides.ins
+      - bathslides-sample-Bath.tex
+      - bathslides-sample-Bath2021.tex
 
   * Running `make` generates the above plus
 
       - bathslides.pdf
       - bathslides-slides.pdf
+      - uob-logo-grey-transparent.pdf
+      - uob-logo-white-transparent.pdf
 
-    It also downloads `uob-logo-grey-transparent.eps` using `wget` and
-    generates `uob-logo-grey-transparent.pdf` using `epstopdf`.
+    You need to have downloaded `uob-logo-grey-transparent.eps` and
+    `uob-logo-white-transparent.eps` to the working directory before
+    running this. If you don't, Make will use Ghostcript (`gs`) to generate
+    blank placeholder images to tide you over.
 
   * Running `make inst` installs the files (and images) in the user's
     TeX tree. (To undo, run `make uninst`.)
@@ -156,6 +168,7 @@ first three steps.
         bathcolors.sty,
         bathslides.cls,
         beamerthemeBath.sty,
+        beamerthemeBath2021.sty,
         and the separately available image files as noted above
         (unless you have a better place to keep logos)
       - `doc/latex/bathslides`:
@@ -184,7 +197,7 @@ This work is "maintained" (as per LPPL maintenance status) by
 
 [beamerswitch]: https://github.com/alex-ball/beamerswitch
 [Releases]: https://github.com/alex-ball/bathslides/releases
-[logo]: http://www.bath.ac.uk/marketing/guides-assets/visual-identity/logo/#id4
+[logo]: https://www.bath.ac.uk/guides/using-the-university-of-bath-logo/
 [lppl]: http://www.latex-project.org/lppl.txt
 [me]: http://alexball.me.uk/
 
@@ -618,16 +631,25 @@ shorthand for \key{article} and \key{alsobeamer}.
 If you don't want the article mode settings introduced by the full class,
 you can simply load the theme directly into \pkg{beamer}:
 
-\begin{dispListing}
+\only<presentation>{\setlength{\columnsep}{7mm}}%
+\only<article>{\setlength{\columnsep}{12mm}}%
+\begin{multicols}{2}
+  \begin{dispListing}
 \documentclass{beamer}
 \usetheme{Bath}
-\end{dispListing}
+  \end{dispListing}
+  \columnbreak
+  \begin{dispListing}
+\documentclass{beamer}
+\usetheme{Bath2021}
+  \end{dispListing}
+\end{multicols}
 \end{frame}
 
 \subsection{Colour scheme}
 
 \begin{frame}[fragile]{Changing the colour scheme}
-Both the class and theme recognise these colour options:
+The class and both themes recognise these colour options:
 
 \begin{multicols}{2}
 \begin{docKey}{darkgrey}{}{}
@@ -692,7 +714,7 @@ Use this to specify exactly one hashtag for sharing on social media. Omit the ha
 \end{docCommand}
 \end{frame}
 
-The above changes are not present in the standalone \pkg{beamer} theme.
+The above changes are not present in the standalone \pkg{beamer} themes.
 You can however sneak the information into your presentation by defining
 \cs{insertoccasion}, \cs{insertauthorurl} and \cs{inserthashtag} respectively.
 To trigger the change in date handling, load the \pkg{isodate} package.
@@ -808,6 +830,8 @@ Note that the background image will be resized to fill the slide completely,
 so to avoid distortion use an image that has approximately the right aspect ratio.
 By default, \pkg{beamer} slides are 128\,mm $\times$ 96\,mm, which is a 4:3 ratio.
 
+\subsection{Progress meter}
+
 \begin{frame}[fragile]{Progress meter}
 Slides show progress information at the bottom right in the form of a dial or
 pie chart. To show progress as a fraction using frame numbers
@@ -824,7 +848,28 @@ To show just the current frame number:
 
 To show nothing at all:
 \begin{dispListing}
-\setbeamertemplate{sidebar right}[default]
+\setbeamertemplate{progress}{}
+\end{dispListing}
+\end{frame}
+
+\subsection{Navigation symbols}
+
+\begin{frame}[fragile]{Navigation symbols}
+  Beamer's normal navigation symbols are switched off by default. If you switch
+them back on again, they can appear either to the side or above the progress
+meter\only<article>{ (assuming you are displaying one)}. This is controlled by the
+\key{navigation and progress} template which can be \key{horizontal}\slash
+\key{default} or \key{vertical}.
+
+Horizontal style:
+\begin{dispListing}
+\setbeamertemplate{navigation symbols}[horizontal]
+\end{dispListing}
+
+Vertical style:
+\begin{dispListing}
+\setbeamertemplate{navigation symbols}[vertical]
+\setbeamertemplate{navigation and progress}[vertical]
 \end{dispListing}
 \end{frame}
 
@@ -1251,8 +1296,8 @@ numbers here are totally fictitious when it comes to the actual files.
 %    \begin{macrocode}
 \setbeamercolor{headline}{parent=palette sidebar primary}
 \setbeamercolor{section in head/foot}{parent=headline}
-\setbeamercolor{sidebar}{parent=palette sidebar primary}
-\setbeamercolor{footline}{use=palette primary,fg=palette primary.fg}
+%<theme>\setbeamercolor{sidebar}{parent=palette sidebar primary}
+%<theme2>\setbeamercolor{sidebar}{use=palette primary,fg=palette primary.fg}
 
 %    \end{macrocode}
 %
@@ -1566,22 +1611,98 @@ numbers here are totally fictitious when it comes to the actual files.
 }
 %    \end{macrocode}
 %
+% By default we remove the tell-tale and seldom used \pkg{beamer} navigation
+% symbols.
+%
+%    \begin{macrocode}
+\setbeamertemplate{navigation symbols}{}
+%    \end{macrocode}
+%
 % \iffalse
 %</theme|theme2>
 %<*theme>
 % \fi
 %
-% The 2015 theme has a right sidebar that inserts the chosen progress template.
+% The progress indicator occupies a similar position to the navigation symbols
+% (if shown) so they have to play nicely together. We provide two options:
+% the navigation symbols are either to the left of the progress indicator
+% (suitable for the \key{horizontal} or \key{only frame symbol} options)
+% or above it (suitable for the \key{vertical} or \key{only frame symbol}
+% options)
+%
+% In the 2015 theme, there is a visible sidebar, and the progress indicator
+% sits centred at the bottom of it. In horizontal mode, the navigation symbols
+% are always to the left of the sidebar.
 %
 %    \begin{macrocode}
 \setbeamersize{sidebar width right=7mm}
-\defbeamertemplate*{sidebar right}{progress}{%
-  \vfill
-  \parbox{7mm}{\usebeamertemplate{progress}}\par
-  \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
-  \vskip 4pt
+\defbeamertemplate*{navigation and progress}{horizontal}{%
+  \makebox[0pt][r]{%
+    \usebeamertemplate***{navigation symbols}\hskip1mm%
+  }%
+  \makebox[7mm][c]{\usebeamertemplate{progress}}%
+}
+\defbeamertemplate{navigation and progress}{vertical}{%
+  \vbox{%
+    \hbox to 7mm{\hfil\usebeamertemplate***{navigation symbols}\hfil}
+    \ifbeamertemplateempty{progress}{}{%
+      \vskip1mm
+      \hbox to 7mm{\hfil\usebeamertemplate{progress}\hfil}
+    }%
+  }
 }
 %    \end{macrocode}
+%
+% \iffalse
+%</theme>
+%<*theme2>
+% \fi
+%
+% In the 2021 theme, the progress indicator sits in a 7mm-wide box
+% just to the left of the zero-width sidebar, at the bottom. It and
+% and the navigation symbols are set to zero width and overlap the
+% page.
+%
+%    \begin{macrocode}
+\defbeamertemplate*{navigation and progress}{horizontal}{%
+  \makebox[0pt][r]{%
+    \usebeamertemplate***{navigation symbols}\hskip1mm%
+    \ifbeamertemplateempty{progress}{}{%
+      \makebox[7mm][c]{\usebeamertemplate{progress}}%
+    }%
+  }%
+}
+\defbeamertemplate{navigation and progress}{vertical}{%
+  \makebox[0pt][r]{%
+    \vbox{%
+      \hbox to 7mm{\hfil\usebeamertemplate***{navigation symbols}\hfil}
+      \ifbeamertemplateempty{progress}{}{%
+        \vskip1mm
+        \hbox to 7mm{\hfil\usebeamertemplate{progress}\hfil}
+      }%
+    }
+  }%
+}
+%    \end{macrocode}
+%
+% \iffalse
+%</theme2>
+%<*theme|theme2>
+% \fi
+%
+%    \begin{macrocode}
+\defbeamertemplatealias{navigation and progress}{horizontal}{default}
+\defbeamertemplate*{sidebar right}{progress}{%
+  \vfill
+  \usebeamertemplate{navigation and progress}\par
+  \ifbeamertemplateempty{progress}{\vskip2pt}{\vskip4pt}%
+}
+%    \end{macrocode}
+%
+% \iffalse
+%</theme|theme2>
+%<*theme>
+% \fi
 %
 % This is the 2015 version of the `frametitle' template.
 %
@@ -1594,7 +1715,9 @@ numbers here are totally fictitious when it comes to the actual files.
     \strut\insertframetitle\strut\par%
     {%
       \ifdefvoid{\insertframesubtitle}{}{%
-        \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par
+        \usebeamerfont{framesubtitle}%
+        \usebeamercolor[fg]{framesubtitle}%
+        \insertframesubtitle\strut\par
       }%
     }%
     \vskip-1ex%
@@ -1607,18 +1730,6 @@ numbers here are totally fictitious when it comes to the actual files.
 %<*theme2>
 % \fi
 %
-% In the 2021 theme, we move the progress template and navigation symbols to the footer.
-%
-%    \begin{macrocode}
-\defbeamertemplate*{sidebar right}{progress}{}
-\defbeamertemplate*{footline}{progress}{%
-  \hfill
-  \parbox{7mm}{\usebeamertemplate{progress}}\par
-  \llap{\usebeamertemplate***{navigation symbols}\hskip0.1cm}%
-  \vskip 4pt
-}
-%    \end{macrocode}
-%
 % The 2021 version of the `frametitle' template has different spacing.
 %
 %    \begin{macrocode}
@@ -1630,7 +1741,9 @@ numbers here are totally fictitious when it comes to the actual files.
     \strut\insertframetitle\strut\par%
     {%
       \ifdefvoid{\insertframesubtitle}{}{%
-        \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par
+        \usebeamerfont{framesubtitle}%
+        \usebeamercolor[fg]{framesubtitle}%
+        \insertframesubtitle\strut\par
       }%
     }%
     \vskip-0.7ex%
@@ -1642,14 +1755,6 @@ numbers here are totally fictitious when it comes to the actual files.
 %</theme2>
 %<*theme|theme2>
 % \fi
-%
-% By default we remove the tell-tale and seldom used \pkg{beamer} navigation symbols.
-%
-%    \begin{macrocode}
-
-\setbeamertemplate{navigation symbols}{}
-
-%    \end{macrocode}
 %
 % By default \pkg{beamer} uses Roman numerals for split frames. We change this to
 % Arabic numerals.

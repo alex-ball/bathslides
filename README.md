@@ -14,17 +14,22 @@ Installation
 ### Pre-requisites ###
 
 To use this theme, you will need to have the image files
-`uob-logo-grey-transparent.pdf` (for PDF) and
-`uob-logo-grey-transparent.eps` (for DVI) somewhere TeX can find them.
+`uob-logo-grey-transparent.pdf` and `uob-logo-white-transparent.pdf` (for PDF)
+and `uob-logo-grey-transparent.eps` and `uob-logo-grey-transparent.eps` (for
+DVI) somewhere TeX can find them.
 I recommend you place them in the same folder as `bathslides.dtx`
 while compiling the class and in a `tex/generic/logos-ubath` folder
 thereafter.
 
-The files are not distributed with the theme for licensing reasons.
-You can download `uob-logo-grey-transparent.eps` from the
-[University of Bath website][logo]. To get the PDF version, run
-`epstopdf uob-logo-grey-transparent.eps`. The `epstopdf` utility is
-available in most TeX distributions.
+The files are not distributed with the theme, firstly for licensing reasons
+and secondly because access to them has been restricted to University of Bath
+members. If you have a working set of credentials, you can download the EPS
+files from the [University of Bath website][logo]; the two you need are listed
+under "Slate grey" and "White" respectively.
+
+To get the PDF versions, run `epstopdf uob-logo-grey-transparent.eps` and
+`epstopdf uob-logo-white-transparent.eps` respectively. The `epstopdf` utility
+is available in most TeX distributions.
 
 The documentation uses fonts from the XCharter and sourcesanspro
 packages, as well as sourcecodepro if XeLaTeX or LuaLaTeX is used,
@@ -40,16 +45,23 @@ A makefile is provided which you can use with the Make utility:
       - README.md
       - bathslides.cls
       - beamerthemeBath.sty
+      - beamerthemeBath2021.sty
       - bathcolors.sty
       - bathslides.ins
+      - bathslides-sample-Bath.tex
+      - bathslides-sample-Bath2021.tex
 
   * Running `make` generates the above plus
 
       - bathslides.pdf
       - bathslides-slides.pdf
+      - uob-logo-grey-transparent.pdf
+      - uob-logo-white-transparent.pdf
 
-    It also downloads `uob-logo-grey-transparent.eps` using `wget` and
-    generates `uob-logo-grey-transparent.pdf` using `epstopdf`.
+    You need to have downloaded `uob-logo-grey-transparent.eps` and
+    `uob-logo-white-transparent.eps` to the working directory before
+    running this. If you don't, Make will use Ghostcript (`gs`) to generate
+    blank placeholder images to tide you over.
 
   * Running `make inst` installs the files (and images) in the user's
     TeX tree. (To undo, run `make uninst`.)
@@ -88,6 +100,7 @@ first three steps.
         bathcolors.sty,
         bathslides.cls,
         beamerthemeBath.sty,
+        beamerthemeBath2021.sty,
         and the separately available image files as noted above
         (unless you have a better place to keep logos)
       - `doc/latex/bathslides`:
@@ -116,7 +129,7 @@ This work is "maintained" (as per LPPL maintenance status) by
 
 [beamerswitch]: https://github.com/alex-ball/beamerswitch
 [Releases]: https://github.com/alex-ball/bathslides/releases
-[logo]: http://www.bath.ac.uk/marketing/guides-assets/visual-identity/logo/#id4
+[logo]: https://www.bath.ac.uk/guides/using-the-university-of-bath-logo/
 [lppl]: http://www.latex-project.org/lppl.txt
 [me]: http://alexball.me.uk/
 
